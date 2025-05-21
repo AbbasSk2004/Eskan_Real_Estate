@@ -1,0 +1,68 @@
+/* Social Login Styles */
+.social-login {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.social-login h4 {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.social-login h4:before,
+.social-login h4:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 25%;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.social-login h4:before {
+    left: 0;
+}
+
+.social-login h4:after {
+    right: 0;
+}
+
+.social-login-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.social-login-buttons .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: opacity 0.3s;
+    width: 120px;
+    text-decoration: none;
+}
+
+.social-login-buttons .btn:hover {
+    opacity: 0.9;
+}
+
+.social-login-buttons .btn i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.btn-google {
+    background-color: #DB4437;
+}
+
+.btn-facebook {
+    background-color: #4267B2;
+}
+
+.btn-twitter {
+    background-color: #1DA1F2;
+}

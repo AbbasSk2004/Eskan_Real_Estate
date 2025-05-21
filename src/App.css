@@ -36,3 +36,47 @@
     transform: rotate(360deg);
   }
 }
+/* Add this to your CSS file */
+.rating-form-bg {
+  background: #fff !important;
+  color: #222 !important;
+}
+
+.rating-form-bg .form-control,
+.rating-form-bg .form-select {
+  background: #f8f9fa !important;
+  color: #222 !important;
+}
+
+.rating-form-bg option {
+  color: #222 !important;
+}
+
+/* Hide scrollbar for all browsers */
+.d-flex.flex-row::-webkit-scrollbar {
+  display: none;
+}
+.d-flex.flex-row {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Add to your main CSS file */
+.d-flex.flex-row {
+  scroll-behavior: smooth;
+}
+
+.material-icons {
+  font-family: 'Material Icons' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  direction: ltr;
+  font-feature-settings: 'liga';         /* Standard property */
+  -webkit-font-feature-settings: 'liga'; /* Vendor prefix for Safari/old Chrome */
+  -webkit-font-smoothing: antialiased;
+}

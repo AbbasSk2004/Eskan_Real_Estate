@@ -1,0 +1,32 @@
+/* Custom styles for testimonial slider */
+.testimonial-carousel .slick-prev,
+.testimonial-carousel .slick-next {
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+}
+
+.testimonial-carousel .slick-prev {
+    left: -50px;
+}
+
+.testimonial-carousel .slick-next {
+    right: -50px;
+}
+
+.testimonial-carousel .slick-prev:before,
+.testimonial-carousel .slick-next:before {
+    font-size: 40px;
+    color: #00B98E;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .testimonial-carousel .slick-prev {
+        left: -30px;
+    }
+    
+    .testimonial-carousel .slick-next {
+        right: -30px;
+    }
+}
