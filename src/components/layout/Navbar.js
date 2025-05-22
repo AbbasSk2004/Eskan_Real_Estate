@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const Navbar = () => {
+const Navbar = ({ onDirectMessagesClick }) => {
   const [isSticky, setIsSticky] = useState(false);
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -146,7 +146,7 @@ const Navbar = () => {
                       <div className="fw-bold">{firstName || 'Account'}</div>
                     </div>
                     <div className="dropdown-divider"></div>
-                    <Link to="/messages" className="dropdown-item">
+                    <Link to="#" className="dropdown-item" onClick={onDirectMessagesClick}>
                       <i className="fa fa-envelope me-2"></i>Direct Messages
                     </Link>
                     <Link to="/profile" className="dropdown-item">

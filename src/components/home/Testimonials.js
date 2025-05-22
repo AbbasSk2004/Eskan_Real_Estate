@@ -44,6 +44,12 @@ const Testimonials = () => {
               <div className="bg-white border rounded p-4">
                 <p>{t.text}</p>
                 <div className="d-flex align-items-center">
+                  {/* Profile Picture */}
+                  <img
+                    src={t.profiles?.profile_photo || '/default-profile.png'}
+                    alt={t.profiles?.first_name ? `${t.profiles.first_name} ${t.profiles.last_name || ''}` : 'User'}
+                    className="testimonial-profile-img me-3"
+                  />
                   <div className="ps-3">
                     <h6 className="fw-bold mb-1">
                       {t.profiles?.first_name || ''} {t.profiles?.last_name || t.profiles?.email || 'User'}

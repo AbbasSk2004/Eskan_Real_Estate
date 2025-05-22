@@ -16,9 +16,12 @@ const upload = multer({ storage });
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: true, // allows all origins for development
   credentials: true
 }));
+
+const twilio = require('twilio');
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Register endpoint
 app.post('/api/auth/register', async (req, res) => {
@@ -97,14 +100,14 @@ app.post('/api/testimonials', getUserFromToken, async (req, res) => {
 app.get('/api/testimonials', async (req, res) => {
   const { data, error } = await supabase
     .from('testimonials')
-    .select('id, text, rating, created_at, profile_id, profiles ( first_name, last_name, email )')
+    .select('id, text, rating, created_at, profile_id, profiles ( first_name, last_name, email, profile_photo )')
     .order('created_at', { ascending: false });
   if (error) return res.status(400).json({ message: error.message });
   res.json(data);
 });
 
 // In-memory store for demo purposes
-const phoneCodes = {};
+const phoneCodes = {}; // { [phone]: { code, expiresAt } }
 
 // Send phone verification code
 app.post('/api/auth/send-phone-code', async (req, res) => {
@@ -113,12 +116,20 @@ app.post('/api/auth/send-phone-code', async (req, res) => {
 
   // Generate a 6-digit code
   const code = Math.floor(100000 + Math.random() * 900000).toString();
-  phoneCodes[phone] = code;
+  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes from now
+  phoneCodes[phone] = { code, expiresAt };
 
-  // TODO: Integrate with SMS provider here
-  console.log(`Verification code for ${phone}: ${code}`);
-
-  res.json({ message: 'Verification code sent.' });
+  try {
+    await twilioClient.messages.create({
+      body: `Your verification code is: ${code}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: phone
+    });
+    res.json({ message: 'Verification code sent.' });
+  } catch (err) {
+    console.error('Twilio error:', err);
+    res.status(500).json({ message: 'Failed to send SMS.' });
+  }
 });
 
 // Verify phone code
@@ -129,8 +140,13 @@ app.post('/api/auth/verify-phone', async (req, res) => {
 
   if (!phone || !code) return res.status(400).json({ message: 'Phone and code are required.' });
 
-  if (phoneCodes[phone] !== code) {
+  const entry = phoneCodes[phone];
+  if (!entry || entry.code !== code) {
     return res.status(400).json({ message: 'Invalid verification code.' });
+  }
+  if (Date.now() > entry.expiresAt) {
+    delete phoneCodes[phone];
+    return res.status(400).json({ message: 'Verification code expired.' });
   }
 
   // Optionally, update the user's profile in Supabase to mark phone as verified
@@ -474,6 +490,87 @@ async function uploadToSupabaseStorage(file, bucket, path) {
     throw err;
   }
 }
+
+// Fetch chat history between current user and another user
+app.get('/api/messages/:userId', getUserFromToken, async (req, res) => {
+  const currentUserId = req.user.id;
+  const otherUserId = req.params.userId;
+
+  // Fetch messages where (sender=currentUser & receiver=otherUser) OR (sender=otherUser & receiver=currentUser)
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUserId})`)
+    .order('created_at', { ascending: true });
+
+  if (error) return res.status(400).json({ message: error.message });
+  res.json(data);
+});
+
+// Send a new message
+app.post('/api/messages', getUserFromToken, async (req, res) => {
+  const sender_id = req.user.id;
+  const { receiver_id, content } = req.body;
+  if (!receiver_id || !content) {
+    return res.status(400).json({ message: 'receiver_id and content are required.' });
+  }
+  const { data, error } = await supabase
+    .from('messages')
+    .insert([{ sender_id, receiver_id, content }])
+    .select()
+    .single();
+  if (error) return res.status(400).json({ message: error.message });
+  res.status(201).json(data);
+});
+
+// Get all profiles (for chat user list)
+app.get('/api/profiles', async (req, res) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, first_name, last_name, email, profile_photo');
+  if (error) return res.status(400).json({ message: error.message });
+  res.json(data);
+});
+
+// Mark messages as read (all messages from otherUser to currentUser)
+app.post('/api/messages/:userId/read', getUserFromToken, async (req, res) => {
+  const currentUserId = req.user.id;
+  const otherUserId = req.params.userId;
+  const { error } = await supabase
+    .from('messages')
+    .update({ read: true })
+    .eq('sender_id', otherUserId)
+    .eq('receiver_id', currentUserId)
+    .eq('read', false);
+  if (error) return res.status(400).json({ message: error.message });
+  res.json({ success: true });
+});
+
+// Get unread message counts for current user
+app.get('/api/messages/unread-counts', getUserFromToken, async (req, res) => {
+  const currentUserId = req.user.id;
+  const { data, error } = await supabase
+    .from('messages')
+    .select('sender_id, count:count(*)')
+    .eq('receiver_id', currentUserId)
+    .eq('read', false)
+    .group('sender_id');
+  if (error) return res.status(400).json({ message: error.message });
+  res.json(data);
+});
+
+// Add this to backend/index.js
+app.post('/api/messages/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+  const file = req.file;
+  const path = `chat/${Date.now()}_${file.originalname}`;
+  try {
+    const url = await uploadToSupabaseStorage(file, 'property-images', path);
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to upload file', error: err.message });
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

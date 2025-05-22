@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext'; // Import your auth context
 
 const Footer = () => {
   const thanksRef = useRef(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
 
   const handleTestimonialSubmit = async (e) => {
     e.preventDefault();

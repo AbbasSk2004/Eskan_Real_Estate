@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getFirebaseAuth } from '../firebase';
 import authService from '../services/auth';
 
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
+  const auth = getFirebaseAuth();
   const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
 
   // Listen for login/logout changes in storage (for multi-tab support)
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       currentUser,
+      setUser: setCurrentUser,
       login,
       logout,
       register,
@@ -48,4 +51,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

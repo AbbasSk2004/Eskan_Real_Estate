@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const LoginForm = () => {
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,17 +25,44 @@ const LoginForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
+
     try {
-      await login(formData.email, formData.password, formData.rememberMe);
-      navigate('/'); // Redirect to home or dashboard
+      // Use AuthContext login, which updates context and storage
+      const user = await login(formData.email, formData.password, formData.rememberMe);
+
+      // Check if user is admin
+      if (user.role === 'admin') {
+        navigate('/admin-panel');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-        'Login failed. Please check your credentials and try again.'
-      );
+      console.error('Login error:', err);
+      
+      if (err.response) {
+        // Handle specific error responses from the server
+        if (err.response.status === 401) {
+          setError('Invalid email or password. Please try again.');
+        } else if (err.response.data && err.response.data.message) {
+          setError(err.response.data.message);
+        } else {
+          setError('Login failed. Please try again.');
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError('No response from server. Please check your internet connection.');
+      } else {
+        // Something happened in setting up the request
+        setError('An error occurred. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSocialLogin = (provider) => {
+    // Redirect to backend OAuth endpoint
+    window.location.href = `/api/auth/${provider}`;
   };
 
   return (
@@ -108,6 +135,32 @@ const LoginForm = () => {
                       >
                         {isSubmitting ? 'Logging in...' : 'Login'}
                       </button>
+                    </div>
+                    <div className="col-12 text-center mt-3">
+                      <p className="mb-2">Or Sign In With</p>
+                      <div className="d-flex justify-content-center">
+                        <button 
+                          type="button" 
+                          className="btn btn-outline-primary me-2" 
+                          onClick={() => handleSocialLogin('facebook')}
+                        >
+                          <i className="fab fa-facebook-f"></i> Facebook
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-outline-danger me-2" 
+                          onClick={() => handleSocialLogin('google')}
+                        >
+                          <i className="fab fa-google"></i> Google
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-outline-info" 
+                          onClick={() => handleSocialLogin('twitter')}
+                        >
+                          <i className="fab fa-twitter"></i> Twitter
+                        </button>
+                      </div>
                     </div>
                     <div className="col-12 text-center mt-3">
                       <p className="mb-0">Don't have an account? <Link to="/register" className="text-primary">Register here</Link></p>
