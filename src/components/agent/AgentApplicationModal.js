@@ -172,12 +172,14 @@ const AgentApplicationModal = ({ show, onClose }) => {
                   <label className="form-check-label">
                     I agree to the{' '}
                     <a
-                      href="#"
+                      href="/"
                       className="text-primary"
                       onClick={e => {
                         e.preventDefault();
                         setShowTerms(true);
                       }}
+                      role="button"
+                      tabIndex="0"
                     >
                       Terms and Conditions
                     </a>

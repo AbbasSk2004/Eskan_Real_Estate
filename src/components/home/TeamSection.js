@@ -45,18 +45,18 @@ const TeamSection = () => {
                     style={{ height: '300px', width: '100%', objectFit: 'cover',position: 'center' }}
                   />
                   <div className="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                    <a className="btn btn-square mx-1" href={agent.facebook || "#"} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn-square mx-1" href={agent.facebook || "/"} target="_blank" rel="noopener noreferrer">
                       <i className="fab fa-facebook-f"></i>
                     </a>
-                    <a className="btn btn-square mx-1" href={agent.twitter || "#"} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn-square mx-1" href={agent.twitter || "/"} target="_blank" rel="noopener noreferrer">
                       <i className="fab fa-twitter"></i>
                     </a>
-                    <a className="btn btn-square mx-1" href={agent.instagram || "#"} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn-square mx-1" href={agent.instagram || "/"} target="_blank" rel="noopener noreferrer">
                       <i className="fab fa-instagram"></i>
                     </a>
                     <a
                       className={`btn btn-square mx-1${!agent.phone ? ' disabled' : ''}`}
-                      href={agent.phone ? `https://wa.me/${agent.phone.replace(/\D/g, '')}` : "#"}
+                      href={agent.phone ? `https://wa.me/${agent.phone.replace(/\D/g, '')}` : "/"}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={agent.phone ? "Chat on WhatsApp" : "No WhatsApp number"}

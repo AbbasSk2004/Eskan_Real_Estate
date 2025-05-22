@@ -10,18 +10,18 @@ const AgentCard = ({ agent }) => (
         style={{ height: '300px', width: '100%', objectFit: 'cover' }}
       />
       <div className="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-        <a className="btn btn-square mx-1" href={agent.social.facebook || "#"} target="_blank" rel="noopener noreferrer">
+        <a className="btn btn-square mx-1" href={agent.social.facebook || "/"} target="_blank" rel="noopener noreferrer">
           <i className="fab fa-facebook-f"></i>
         </a>
-        <a className="btn btn-square mx-1" href={agent.social.twitter || "#"} target="_blank" rel="noopener noreferrer">
+        <a className="btn btn-square mx-1" href={agent.social.twitter || "/"} target="_blank" rel="noopener noreferrer">
           <i className="fab fa-twitter"></i>
         </a>
-        <a className="btn btn-square mx-1" href={agent.social.instagram || "#"} target="_blank" rel="noopener noreferrer">
+        <a className="btn btn-square mx-1" href={agent.social.instagram || "/"} target="_blank" rel="noopener noreferrer">
           <i className="fab fa-instagram"></i>
         </a>
         <a
           className={`btn btn-square mx-1${!agent.social.whatsapp ? ' disabled' : ''}`}
-          href={agent.social.whatsapp ? `https://wa.me/${agent.social.whatsapp.replace(/\D/g, '')}` : "#"}
+          href={agent.social.whatsapp ? `https://wa.me/${agent.social.whatsapp.replace(/\D/g, '')}` : "/"}
           target="_blank"
           rel="noopener noreferrer"
           title={agent.social.whatsapp ? "Chat on WhatsApp" : "No WhatsApp number"}

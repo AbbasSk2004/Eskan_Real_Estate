@@ -117,9 +117,9 @@ const About = () => {
                   <div className="position-relative">
                     <img className="img-fluid" src={advisor.image} alt={advisor.name} />
                     <div className="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                      <a className="btn btn-square mx-1" href=""><i className="fab fa-facebook-f"></i></a>
-                      <a className="btn btn-square mx-1" href=""><i className="fab fa-twitter"></i></a>
-                      <a className="btn btn-square mx-1" href=""><i className="fab fa-linkedin-in"></i></a>
+                      <a className="btn btn-square mx-1" href="/" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
+                      <a className="btn btn-square mx-1" href="/" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+                      <a className="btn btn-square mx-1" href="/" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
                     </div>
                   </div>
                   <div className="text-center p-4 mt-3">

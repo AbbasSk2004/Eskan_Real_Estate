@@ -51,10 +51,10 @@ const Footer = () => {
             <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+961 1 234 567</p>
             <p className="mb-2"><i className="fa fa-envelope me-3"></i>info@eskan-lebanon.com</p>
             <div className="d-flex pt-2">
-              <a className="btn btn-outline-light btn-social" href="#"><i className="fab fa-twitter"></i></a>
-              <a className="btn btn-outline-light btn-social" href="#"><i className="fab fa-facebook-f"></i></a>
-              <a className="btn btn-outline-light btn-social" href="#"><i className="fab fa-youtube"></i></a>
-              <a className="btn btn-outline-light btn-social" href="#"><i className="fab fa-linkedin-in"></i></a>
+              <a className="btn btn-outline-light btn-social" href="/" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+              <a className="btn btn-outline-light btn-social" href="/" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
+              <a className="btn btn-outline-light btn-social" href="/" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
+              <a className="btn btn-outline-light btn-social" href="/" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
             </div>
           </div>
           <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1">
@@ -62,8 +62,8 @@ const Footer = () => {
             <Link to="/about" className="btn btn-link text-white-50">About Us</Link>
             <Link to="/contact" className="btn btn-link text-white-50">Contact Us</Link>
             <Link to="/properties" className="btn btn-link text-white-50">Our Properties</Link>
-            <a className="btn btn-link text-white-50" href="#">Privacy Policy</a>
-            <a className="btn btn-link text-white-50" href="#">Terms & Condition</a>
+            <a className="btn btn-link text-white-50" href="/">Privacy Policy</a>
+            <a className="btn btn-link text-white-50" href="/">Terms & Condition</a>
           </div>
           <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1">
             <h5 className="text-white mb-4">Rate Us</h5>

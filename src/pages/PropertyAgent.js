@@ -85,7 +85,7 @@ const PropertyAgent = () => {
                   <a href="tel:+1234567890" className="btn btn-primary py-3 px-4 me-2">
                     <i className="fa fa-phone-alt me-2"></i>Make A Call
                   </a>
-                  <a href="#" className="btn btn-dark py-3 px-4">
+                  <a href="/" className="btn btn-dark py-3 px-4" role="button" tabIndex="0">
                     <i className="fa fa-calendar-alt me-2"></i>Get Appointment
                   </a>
                 </div>
