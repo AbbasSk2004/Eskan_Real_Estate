@@ -1,26 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AgentList from '../components/agent/AgentList';
-import AgentSearch from '../components/agent/AgentSearch';
 import AgentApplicationModal from '../components/agent/AgentApplicationModal';
 import { useNavigate } from 'react-router-dom';
+import { endpoints } from '../services/api';
 
 const PropertyAgent = () => {
   const [showModal, setShowModal] = useState(false);
-  const [filters, setFilters] = useState({ name: '', specialty: '', experience: '' });
+  const [hasApplication, setHasApplication] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkApplicationStatus();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const checkApplicationStatus = async () => {
+    try {
+      const response = await endpoints.agents.getApplicationDetails();
+      setHasApplication(!!response?.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error checking application status:', error);
+      setLoading(false);
+    }
+  };
+
   const handleBecomeAgentClick = () => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       navigate('/login');
     } else {
       setShowModal(true);
     }
   };
-
-  // Check if any filter is active
-  const isSearching = filters.name || filters.specialty || filters.experience;
 
   return (
     <>
@@ -41,30 +58,35 @@ const PropertyAgent = () => {
           </div>
         </div>
       </div>
-      {/* Search */}
-      <div className="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style={{ padding: '35px' }}>
-        <div className="container">
-          <AgentSearch filters={filters} setFilters={setFilters} />
-        </div>
-      </div>
-      {/* Agent List & Become Agent */}
+    
+      {/* Agent List Section */}
       <div className="container-xxl py-5">
         <div className="container">
-          {!isSearching && (
-            <div className="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: 600 }}>
-              <h1 className="mb-3">Property Agents</h1>
-              <p>Meet our experienced team of property agents who are dedicated to helping you find your perfect property.</p>
+          <div className="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '600px' }}>
+            <h1 className="mb-3">Our Property Agents</h1>
+            <p>Meet our experienced real estate agents who are here to help you find your perfect property.</p>
+          </div>
+
+          <div className="mt-5">
+            <AgentList />
+          </div>
+
+          {!loading && !hasApplication && (
+            <div className="text-center mt-5">
+              <button className="btn btn-primary py-3 px-5" onClick={handleBecomeAgentClick}>
+                <i className="fa fa-user-plus me-2"></i>Become an Agent
+              </button>
             </div>
           )}
-          <AgentList filters={filters} />
-          <div className="text-center mt-4">
-            <button className="btn btn-primary py-3 px-5" onClick={handleBecomeAgentClick}>
-              <i className="fa fa-user-plus me-2"></i>Become an Agent
-            </button>
-          </div>
+
         </div>
       </div>
-      <AgentApplicationModal show={showModal} onClose={() => setShowModal(false)} />
+
+      <AgentApplicationModal 
+        show={showModal} 
+        onClose={() => setShowModal(false)} 
+        onApplicationSubmitted={() => setHasApplication(true)}
+      />
 
       {/* Call to Action Start */}
       <div className="container-xxl py-5">

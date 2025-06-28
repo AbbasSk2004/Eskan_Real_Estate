@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import api from '../../services/api';
+import api, { endpoints } from '../../services/api';
 import TermsAndConditions from '../legal/TermsAndConditions';
 
 const initialFormState = {
-  fullName: '',
-  email: '',
-  phone: '',
   specialty: '',
+  phone: '',
   experience: '',
   aboutMe: '',
   profilePhoto: null,
@@ -17,7 +15,7 @@ const initialFormState = {
   terms: false
 };
 
-const AgentApplicationModal = ({ show, onClose }) => {
+const AgentApplicationModal = ({ show, onClose, onApplicationSubmitted }) => {
   const [form, setForm] = useState(initialFormState);
   const [showTerms, setShowTerms] = useState(false);
   const [error, setError] = useState('');
@@ -46,6 +44,24 @@ const AgentApplicationModal = ({ show, onClose }) => {
     e.preventDefault();
     setError('');
 
+    // Validate required fields
+    if (!form.specialty) {
+      setError('Please select a specialty.');
+      return;
+    }
+    if (!form.experience) {
+      setError('Please select your years of experience.');
+      return;
+    }
+    if (!form.aboutMe?.trim()) {
+      setError('Please provide information about yourself.');
+      return;
+    }
+    if (!form.terms) {
+      setError('Please accept the terms and conditions.');
+      return;
+    }
+
     // Validate phone number: must be 8 digits after normalization (excluding +961)
     const cleaned = form.phone.replace(/\D/g, '');
     let localPart = cleaned;
@@ -59,24 +75,78 @@ const AgentApplicationModal = ({ show, onClose }) => {
       return;
     }
 
+    // Validate file uploads
+    if (!form.profilePhoto) {
+      setError('Please upload a profile photo.');
+      return;
+    }
+    if (!form.cvResume) {
+      setError('Please upload your CV/Resume.');
+      return;
+    }
+
+    // Validate file types
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const allowedDocTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    
+    if (!allowedImageTypes.includes(form.profilePhoto.type)) {
+      setError('Profile photo must be a JPG, PNG, or GIF file.');
+      return;
+    }
+    if (!allowedDocTypes.includes(form.cvResume.type)) {
+      setError('CV/Resume must be a PDF or Word document.');
+      return;
+    }
+
     const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === 'phone' && value) {
-        formData.append('phone', normalizeLebanesePhone(value));
-      } else if (value !== null) {
-        formData.append(key, value);
-      }
-    });
+
+    // Add required fields matching backend expectations
+    formData.append('specialization', form.specialty);
+    formData.append('experience', form.experience);
+    formData.append('bio', form.aboutMe.trim());
+    formData.append('phone', normalizeLebanesePhone(form.phone));
+    formData.append('languages', 'English, Arabic');
+    
+    // Add social media links if provided
+    if (form.facebook?.trim()) formData.append('facebook_url', form.facebook.trim());
+    if (form.twitter?.trim()) formData.append('twitter_url', form.twitter.trim());
+    if (form.instagram?.trim()) formData.append('instagram_url', form.instagram.trim());
+
+    // Add files with names matching backend expectations
+    formData.append('profilePhoto', form.profilePhoto);
+    formData.append('cvResume', form.cvResume);
 
     try {
-      await api.post('/agent-applications', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      alert('Your application has been submitted successfully!');
-      setForm(initialFormState);
-      onClose();
+      console.log('Submitting application...');
+      // Log FormData contents for debugging
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+      }
+      
+      const response = await endpoints.agents.apply(formData);
+      
+      if (response.data?.success) {
+        alert('Your application has been submitted successfully!');
+        setForm(initialFormState);
+        if (onApplicationSubmitted) {
+          onApplicationSubmitted();
+        }
+        onClose();
+      } else if (response.data?.message) {
+        setError(response.data.message);
+      } else {
+        throw new Error('Failed to submit application');
+      }
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to submit application.');
+      console.error('Application error:', error);
+      
+      if (error.response?.status === 401) {
+        setError('Please log in to submit your application.');
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError(error.message || 'Failed to submit application. Please try again.');
+      }
     }
   };
 
@@ -100,16 +170,6 @@ const AgentApplicationModal = ({ show, onClose }) => {
               </div>
               <div className="modal-body" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Full Name</label>
-                    <input type="text" className="form-control" name="fullName" value={form.fullName} onChange={handleChange} required />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Email Address</label>
-                    <input type="email" className="form-control" name="email" value={form.email} onChange={handleChange} required />
-                  </div>
-                </div>
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">Phone Number</label>
@@ -139,8 +199,16 @@ const AgentApplicationModal = ({ show, onClose }) => {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">About Me</label>
-                  <textarea className="form-control" name="aboutMe" rows="3" value={form.aboutMe} onChange={handleChange} required></textarea>
+                  <label className="form-label">About Me <span className="text-danger">*</span></label>
+                  <textarea 
+                    className="form-control" 
+                    name="aboutMe" 
+                    rows="3" 
+                    value={form.aboutMe} 
+                    onChange={handleChange} 
+                    required 
+                    placeholder="Tell us about your experience and why you want to be an agent..."
+                  ></textarea>
                 </div>
                 <div className="row mb-3">
                   <div className="col-md-6">

@@ -1,46 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import AddPropertyForm from '../components/properties/AddPropertyForm';
+import { Navigate } from 'react-router-dom';
+import PropertyForm from '../components/properties/PropertyForm';
+import { toast } from 'react-toastify';
 
 const AddProperty = () => {
-  const { isAuthenticated, currentUser } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  // Track whether the property was submitted successfully
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  React.useEffect(() => {
-    if (!isAuthenticated() || !currentUser) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, currentUser, navigate]);
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // Optionally, show nothing or a loading spinner while checking
-  if (!isAuthenticated() || !currentUser) return null;
+  const handleSubmitSuccess = () => {
+    toast.success('Your property has been submitted! We will review it within 24 hours.');
+    setIsSubmitted(true);
+  };
 
   return (
-    <>
-      {/* Header Start */}
-      <div className="container-fluid header bg-white p-0">
-        <div className="row g-0 align-items-center flex-column-reverse flex-md-row">
-          <div className="col-md-6 p-5 mt-lg-5">
-            <h1 className="display-5 animated fadeIn mb-4">List Your Property</h1>
-            <nav aria-label="breadcrumb animated fadeIn">
-              <ol className="breadcrumb text-uppercase">
-                <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item text-body active" aria-current="page">Add Property</li>
-              </ol>
-            </nav>
-          </div>
-          <div className="col-md-6 animated fadeIn">
-            <img className="img-fluid" src="/img/header.jpg" alt="Add Property" />
+    <div className="add-property-page">
+      <div className="container-fluid py-4">
+        <div className="row">
+          <div className="col-12">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 className="h3 mb-1">Add New Property</h1>
+                <p className="text-muted">Fill in the details below to list your property</p>
+              </div>
+              <div className="text-end">
+                <small className="text-muted">
+                  <i className="fa fa-info-circle me-1"></i>
+                  Fields marked with * are required
+                </small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      {/* Header End */}
-
-      {/* Add Property Form Start */}
-      <AddPropertyForm />
-      {/* Add Property Form End */}
-    </>
+      
+      {isSubmitted ? (
+        <div className="container py-5">
+          <div className="alert alert-info text-center" role="alert">
+            Your property has been submitted successfully and is now under review. We typically review listings within 24&nbsp;hours.
+          </div>
+        </div>
+      ) : (
+        <PropertyForm mode="create" onSubmitSuccess={handleSubmitSuccess} />
+      )}
+    </div>
   );
 };
 

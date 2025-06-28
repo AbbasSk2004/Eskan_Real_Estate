@@ -1,0 +1,78 @@
+.filter-sidebar {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.filter-sidebar .accordion-button {
+  background: transparent;
+  border: none;
+  color: #333;
+  font-weight: 600;
+  padding: 1.25rem 0;
+}
+
+.filter-sidebar .accordion-button:not(.collapsed) {
+  background: transparent;
+  box-shadow: none;
+}
+
+.filter-sidebar .accordion-button:focus {
+  box-shadow: none;
+}
+
+.filter-sidebar .form-label {
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+}
+
+.filter-sidebar .form-select,
+.filter-sidebar .form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.filter-sidebar .form-select:focus,
+.filter-sidebar .form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+.filter-sidebar .form-select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.filter-sidebar .form-check-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.filter-sidebar .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.filter-sidebar .btn {
+  font-size: 14px;
+  padding: 0.6rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.filter-sidebar .btn:hover {
+  background-color: #e9ecef;
+}
+
+.filter-sidebar .btn i {
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-sidebar {
+    margin-bottom: 2rem;
+  }
+}

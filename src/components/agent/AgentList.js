@@ -1,129 +1,131 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import AgentCard from './AgentCard';
+import LoadingSpinner from '../common/LoadingSpinner';
 import { endpoints } from '../../services/api';
+import { useToast } from '../../hooks/useToast';
 
-const CARD_WIDTH = 270 + 24; // Card width + gap (px)
-
-const AgentList = ({ filters }) => {
+const AgentList = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(null);
-  const scrollRef = useRef(null);
+  const [error, setError] = useState(null);
+  const toast = useToast();
+  const abortControllerRef = useRef(null);
+  const fetchAttemptRef = useRef(0);
+
+  const fetchAgents = useCallback(async () => {
+    try {
+      // Cancel previous request if exists
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller
+      abortControllerRef.current = new AbortController();
+      
+      setLoading(true);
+      setError(null);
+      
+      const response = await endpoints.agents.getAll();
+      
+      // Check if component is still mounted
+      if (!abortControllerRef.current) return;
+
+      if (!response?.data?.success) {
+        throw new Error(response?.data?.message || 'Failed to fetch agents');
+      }
+
+      // Filter for approved agents
+      const approvedAgents = (response.data.data || []).filter(agent => 
+        agent.approved && agent.status === 'approved'
+      );
+      
+      setAgents(approvedAgents);
+      setLoading(false);
+    } catch (err) {
+      // Skip error handling if request was cancelled or component unmounted
+      if (err.name === 'AbortError' || !abortControllerRef.current) {
+        return;
+      }
+
+      console.error('Error fetching agents:', err);
+      setError(err.message || 'Failed to fetch agents. Please try again.');
+      
+      // Only show toast on first attempt
+      if (fetchAttemptRef.current === 0) {
+        toast.error('Failed to fetch agents');
+      }
+      
+      setAgents([]);
+      setLoading(false);
+      fetchAttemptRef.current += 1;
+    }
+  }, []); // No dependencies needed since we use refs
 
   useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        setLoading(true);
-        setFetchError(null);
-        const response = await endpoints.getAgents(filters); // Pass filters here
-        setAgents(response.data);
-      } catch (error) {
-        setFetchError(
-          error.response?.data?.message ||
-          error.message ||
-          'Failed to fetch agents.'
-        );
-        setAgents([]);
-      } finally {
-        setLoading(false);
+    fetchAttemptRef.current = 0;
+    fetchAgents();
+
+    return () => {
+      // Cleanup: abort any pending request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
       }
     };
-    fetchAgents();
-  }, [filters]); // Re-fetch when filters change
+  }, []); // No dependencies needed
 
-  // Scroll handlers
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -CARD_WIDTH * 2, behavior: 'smooth' });
-    }
-  };
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: CARD_WIDTH * 2, behavior: 'smooth' });
-    }
-  };
+  if (loading) {
+    return (
+      <div className="container-xxl py-5">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="mt-3">Loading our property agents...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // Touch/swipe support
-  let startX = 0;
-  let scrollLeftStart = 0;
-  const handleTouchStart = (e) => {
-    startX = e.touches[0].pageX;
-    scrollLeftStart = scrollRef.current.scrollLeft;
-  };
-  const handleTouchMove = (e) => {
-    if (!scrollRef.current) return;
-    const dx = e.touches[0].pageX - startX;
-    scrollRef.current.scrollLeft = scrollLeftStart - dx;
-  };
+  if (error) {
+    return (
+      <div className="container-xxl py-5">
+        <div className="alert alert-danger text-center" role="alert">
+          <p>{error}</p>
+          <button
+            className="btn btn-outline-primary mt-2"
+            onClick={() => {
+              fetchAttemptRef.current = 0;
+              fetchAgents();
+            }}
+          >
+            <i className="fas fa-sync-alt me-2"></i>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  if (loading) return <div>Loading agents...</div>;
-  if (fetchError) return <div className="alert alert-danger">{fetchError}</div>;
-  if (!agents.length) return <div className="alert alert-warning">No agents found.</div>;
+  if (!agents || agents.length === 0) {
+    return (
+      <div className="container-xxl py-5">
+        <div className="text-center">
+          <h5>No Agents Available</h5>
+          <p className="text-muted">There are currently no approved agents.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-xxl py-5">
-      <div className="container position-relative">
-        {/* Left Button */}
-        <button
-          className="btn btn-primary position-absolute top-50 start-0 translate-middle-y"
-          style={{ zIndex: 2, left: '-90px' }} // was -20px
-          onClick={scrollLeft}
-          aria-label="Scroll left"
-        >
-          <i className="fa fa-chevron-left"></i>
-        </button>
-        {/* Right Button */}
-        <button
-          className="btn btn-primary position-absolute top-50 end-0 translate-middle-y"
-          style={{ zIndex: 2, right: '-90px' }} // was -20px
-          onClick={scrollRight}
-          aria-label="Scroll right"
-        >
-          <i className="fa fa-chevron-right"></i>
-        </button>
-        {/* Scrollable Row */}
-        <div
-          className="d-flex flex-row"
-          style={{
-            gap: '1.5rem',
-            paddingBottom: '1rem',
-            scrollBehavior: 'smooth',
-            overflowX: 'auto',
-            msOverflowStyle: 'none', // IE/Edge
-            scrollbarWidth: 'none'   // Firefox
-          }}
-          ref={scrollRef}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-        >
+      <div className="container">
+        
+        <div className="row g-4">
           {agents.map((agent, index) => (
-            <div
-              key={agent.id}
-              className="col-lg-3 col-md-6 wow fadeInUp"
-              data-wow-delay={`${0.1 + index * 0.2}s`}
-              style={{
-                minWidth: '270px',
-                maxWidth: '270px',
-                flex: '0 0 auto'
-              }}
-            >
-              <AgentCard
-                agent={{
-                  name: agent.profiles
-                    ? `${agent.profiles.first_name} ${agent.profiles.last_name}`
-                    : agent.full_name,
-                  image: agent.profile_photo,
-                  title: agent.specialty,
-                  experience: agent.experience,
-                  about: agent.about_me,
-                  social: {
-                    facebook: agent.facebook,
-                    twitter: agent.twitter,
-                    instagram: agent.instagram,
-                    whatsapp: agent.phone
-                  }
-                }}
-              />
+            <div key={agent.id} 
+                 className="col-lg-3 col-md-6 wow fadeInUp" 
+                 data-wow-delay={`${0.1 + (index % 4) * 0.2}s`}>
+              <AgentCard agent={agent} />
             </div>
           ))}
         </div>

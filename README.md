@@ -1,12 +1,23 @@
 # Real Estate React Application
 
+[![React](https://img.shields.io/badge/React-18.x-blue)](https://reactjs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-green)](https://expressjs.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Latest-purple)](https://supabase.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+```bash
+# Enable debug logging
+DEBUG=eskan:* npm start
+
+# Backend debug mode
+NODE_ENV=development DEBUG=express:* npm run dev
+```
+
+## 🎉 Success Stories
+
 A full-stack, modern real estate web application built with React for the frontend and Express.js with Supabase for the backend. The platform allows users to browse, search, and filter property listings, manage their accounts, and contact agents directly. It features a responsive design, image galleries, testimonials, agent profiles, and an admin panel for property management.
 
-
-<!-- Optionally add a link or screenshot here -->
-<!-- ![Demo Screenshot](public/img/demo.png) -->
-
-## Features
+## 🚀 Features
 
 - Property listings with advanced search and filter functionality
 - User authentication (login, register, social login)
@@ -20,7 +31,7 @@ A full-stack, modern real estate web application built with React for the fronte
 - Agent profiles
 - Admin panel for property and user management
 
-## Technologies Used
+## 🛠️ Technologies Used
 
 - React.js
 - React Router for navigation
@@ -34,12 +45,32 @@ A full-stack, modern real estate web application built with React for the fronte
 - Supabase for backend and authentication
 - Express.js for backend API
 
-## Getting Started
+## 🏁 Getting Started
 
 ### Prerequisites
 
 - Node.js (v14 or later)
 - npm or yarn
+- Docker (optional, for containerization)
+- Supabase account and project
+
+### Environment Variables
+
+#### Frontend (.env)
+```
+REACT_APP_SUPABASE_URL=your_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+#### Backend (backend/.env)
+```
+NODE_ENV=development
+PORT=5000
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+JWT_SECRET=your_jwt_secret
+```
 
 ### Installation
 
@@ -77,132 +108,79 @@ A full-stack, modern real estate web application built with React for the fronte
 
 7. Open your browser and visit `http://localhost:3000`
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-.gitignore
-package.json
-README.md
-.vscode/
-│   └── launch.json
-backend/
-│   ├── .env
-│   ├── index.js
-│   └── package.json
-public/
-│   ├── favicon.ico
-│   ├── index.html
-│   ├── logo192.png
-│   ├── logo512.png
-│   ├── manifest.json
-│   ├── robots.txt
-│   └── img/
-│       ├── about.jpg
-│       ├── call-to-action.jpg
-│       ├── carousel-1.jpg
-│       ├── carousel-2.jpg
-│       ├── header.jpg
-│       ├── icon-apartment.png
-│       ├── icon-building.png
-│       └── ...
-src/
-│   ├── App.css
-│   ├── App.js
-│   ├── App.test.js
-│   ├── index.css
-│   ├── index.js
-│   ├── logo.svg
-│   ├── reportWebVitals.js
-│   ├── setupTests.js
-│   ├── supabase.js
-│   ├── assets/
-│   │   ├── css/
-│   │   ├── img/
-│   │   ├── lib/
-│   │   │   ├── owlcarousel/
-│   │   │   │   ├── assets/
-│   │   │   │   │   ├── owl.carousel.css
-│   │   │   │   │   ├── owl.theme.green.min.css
-│   │   │   │   │   └── ...
-│   │   │   │   ├── owl.carousel.js
-│   │   │   │   └── LICENSE
-│   │   │   ├── waypoints/
-│   │   │   │   ├── links.php
-│   │   │   │   └── ...
-│   │   │   └── wow/
-│   │   │       └── wow.js
-│   │   └── scss/
-│   │       └── bootstrap/
-│   │           ├── scss/
-│   │           │   ├── _reboot.scss
-│   │           │   ├── _type.scss
-│   │           │   └── bootstrap.scss
-│   │           └── bootstrap-reboot.scss
-│   ├── components/
-│   │   ├── auth/
-│   │   │   ├── LoginForm.js
-│   │   │   ├── RegisterForm.js
-│   │   │   └── PhoneVerification.js
-│   │   ├── common/
-│   │   │   ├── BackToTop.js
-│   │   │   ├── ProtectedRoute.js
-│   │   │   └── Spinner.js
-│   │   ├── home/
-│   │   │   ├── AboutSection.js
-│   │   │   ├── CallToAction.js
-│   │   │   ├── CategorySection.js
-│   │   │   ├── FeaturedProperties.js
-│   │   │   ├── HeaderCarousel.js
-│   │   │   ├── SearchForm.js
-│   │   │   ├── TeamSection.js
-│   │   │   └── Testimonials.js
-│   │   └── layout/
-│   │       ├── Footer.js
-│   │       └── Navbar.js
-│   ├── context/
-│   │   └── AuthContext.js
-│   ├── pages/
-│   │   ├── About.js
-│   │   ├── Contact.js
-│   │   ├── Home.js
-│   │   ├── Login.js
-│   │   ├── NotFound.js
-│   │   ├── Properties.js
-│   │   ├── PropertyDetail.js
-│   │   └── Register.js
-│   ├── services/
-│   │   ├── api.js
-│   │   └── auth.js
-│   ├── utils/
-│   │   └── helpers.js
-│   ├── App.js
-│   └── index.js
+├── backend/                # Express.js backend
+│   ├── config/            # Configuration files
+│   ├── database/          # Database schemas and migrations
+│   ├── routes/            # API routes
+│   └── utils/             # Utility functions
+├── public/                # Static files
+├── src/                   # React frontend
+│   ├── components/        # Reusable components
+│   ├── context/          # React Context providers
+│   ├── hooks/            # Custom React hooks
+│   ├── pages/            # Page components
+│   ├── services/         # API services
+│   └── utils/            # Utility functions
+├── docs/                  # Documentation
+└── nginx/                 # Nginx configuration
 ```
 
-## API Integration
+## 🧪 Testing
 
-The application is designed to work with a RESTful API. By default, it connects to the backend Express.js server in the `backend/` directory, which uses Supabase for data storage and authentication. You can update or extend the API endpoints in [`src/services/api.js`](src/services/api.js).
-
-## Deployment
-
-To build the application for production:
+Run the test suites:
 
 ```bash
-npm run build
+# Frontend tests
+npm test
+
+# Backend tests
+cd backend
+npm test
 ```
 
-This will create a `build` directory with optimized production files that can be deployed to any static hosting service like Netlify, Vercel, or GitHub Pages.
+## 🐳 Docker Deployment
 
-### Docker Deployment
-
-A `Dockerfile` and `nginx.conf` are provided for containerized deployment:
+Build and run with Docker Compose:
 
 ```bash
-docker build -t real-estate-app .
-docker run -p 80:80 real-estate-app
+docker-compose up --build
 ```
 
-## Contributing
+Or build and run individual containers:
+
+```bash
+# Build and run frontend
+docker build -t real-estate-frontend .
+docker run -p 80:80 real-estate-frontend
+
+# Build and run backend
+cd backend
+docker build -t real-estate-backend .
+docker run -p 5000:5000 real-estate-backend
+```
+
+## ⚠️ Troubleshooting
+
+Common issues and solutions:
+
+1. **CORS errors**: Ensure your backend CORS configuration matches your frontend domain
+2. **Authentication issues**: Verify Supabase credentials and JWT configuration
+3. **Image upload fails**: Check Supabase storage bucket permissions
+4. **Build fails**: Clear npm cache and node_modules, then reinstall
+
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Remove node_modules and reinstall
+rm -rf node_modules
+npm install
+```
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -210,58 +188,14 @@ docker run -p 80:80 real-estate-app
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - Design inspiration from various real estate websites
-- Bootstrap themes and templates
-- Open source libraries and tools
-
-## Step 19: Create a Dockerfile for containerization
-
-```dockerfile:Dockerfile
-# Build stage
-FROM node:16-alpine as build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# Production stage
-FROM nginx:stable-alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-## Step 20: Create nginx configuration for production
-
-```nginx:nginx/nginx.conf
-server {
-    listen 80;
-    
-    location / {
-        root /usr/share/nginx/html;
-        index index.html index.htm;
-        try_files $uri $uri/ /index.html;
-    }
-    
-    # Cache static assets
-    location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
-        root /usr/share/nginx/html;
-        expires 1y;
-        add_header Cache-Control "public, max-age=31536000";
-    }
-    
-    # Error pages
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-        root /usr/share/nginx/html;
-    }
-}
-```
+- [Bootstrap](https://getbootstrap.com/) for the UI framework
+- [Supabase](https://supabase.io/) for backend services
+- [Express.js](https://expressjs.com/) for the API server
+- All the awesome [contributors](https://github.com/yourusername/real-estate-react/graphs/contributors)

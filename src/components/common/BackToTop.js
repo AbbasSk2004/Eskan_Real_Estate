@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Show button when page is scrolled down
+  // Show button when page is scrolled up to given distance
   const toggleVisibility = () => {
     if (window.pageYOffset > 300) {
       setIsVisible(true);
@@ -12,30 +12,51 @@ const BackToTop = () => {
     }
   };
 
-  // Set up scroll event listener
+  // Set the scroll event listener
   useEffect(() => {
+    // Ensure we're at the top on page load/refresh
+    window.scrollTo(0, 0);
+    
+    // Add scroll event listener
     window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    
+    // Add load event listener for refreshes
+    window.addEventListener('load', () => {
+      window.scrollTo(0, 0);
+      setIsVisible(false);
+    });
+    
+    // Clean up event listeners
+    return () => {
+      window.removeEventListener('scroll', toggleVisibility);
+      window.removeEventListener('load', () => {
+        window.scrollTo(0, 0);
+        setIsVisible(false);
+      });
+    };
   }, []);
 
-  // Scroll to top function
+  // Scroll to top smoothly
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
   return (
-    <button
-      type="button"
-      className={`btn btn-lg btn-primary btn-lg-square back-to-top ${isVisible ? 'fadeIn' : 'fadeOut'}`}
-      style={{ display: isVisible ? 'inline-flex' : 'none' }}
-      onClick={scrollToTop}
-      aria-label="Back to top"
-    >
-      <i className="bi bi-arrow-up"></i>
-    </button>
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="btn btn-primary rounded-circle position-fixed bottom-0 end-0 me-4 mb-4 shadow-lg d-flex align-items-center justify-content-center"
+          style={{ width: '45px', height: '45px', zIndex: 1000 }}
+          aria-label="Back to top"
+        >
+          ↑
+        </button>
+      )}
+    </>
   );
 };
 

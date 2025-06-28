@@ -3,15 +3,27 @@ import { Link } from 'react-router-dom';
 
 const NotFound = () => {
   return (
-    <div className="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
-      <div className="container text-center">
+    <div className="container-fluid py-5" style={{ minHeight: '80vh' }}>
+      <div className="container">
         <div className="row justify-content-center">
-          <div className="col-lg-6">
-            <i className="bi bi-exclamation-triangle display-1 text-primary"></i>
-            <h1 className="display-1">404</h1>
-            <h1 className="mb-4">Page Not Found</h1>
-            <p className="mb-4">We're sorry, the page you have looked for does not exist in our website! Maybe go to our home page or try to use a search?</p>
-            <Link to="/" className="btn btn-primary py-3 px-5">Go Back To Home</Link>
+          <div className="col-lg-6 text-center">
+            <div className="py-5">
+              <h1 className="display-1 text-primary fw-bold">404</h1>
+              <h2 className="mb-4">Page Not Found</h2>
+              <p className="text-muted mb-4">
+                Sorry, the page you are looking for doesn't exist or has been moved.
+              </p>
+              <div className="d-flex gap-3 justify-content-center">
+                <Link to="/" className="btn btn-primary">
+                  <i className="fa fa-home me-2"></i>
+                  Go Home
+                </Link>
+                <Link to="/properties" className="btn btn-outline-primary">
+                  <i className="fa fa-building me-2"></i>
+                  Browse Properties
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

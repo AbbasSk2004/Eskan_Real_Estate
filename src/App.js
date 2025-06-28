@@ -1,114 +1,222 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ApiProvider } from './context/ApiContext';
+import { DatabaseProvider } from './context/DatabaseContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
+import { ChatProvider, useGlobalChat } from './context/ChatContext';
+import { GoogleMapsProvider } from './components/shared/GoogleMapsLoader';
+import toast from 'react-hot-toast';
+import { checkEnvironmentSetup } from './utils/setupHelpers';
+import ScrollToTop from './components/common/ScrollToTop';
+import BackToTop from './components/common/BackToTop';
+import CustomToastContainer from './components/common/ToastContainer';
+import LoadingSpinner from './components/common/LoadingSpinner';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PrivateRoute from './components/auth/PrivateRoute';
+import authStorage from './utils/authStorage';
+import websocketService from './services/websocket';
 
-// Layout components
+// Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import Spinner from './components/common/Spinner';
-import BackToTop from './components/common/BackToTop';
-import ScrollToTop from './components/common/ScrollToTop';
-import SideChat from './components/chat/SideChat';
-
-// Styles
-
-import './assets/lib/animate/animate.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-// Pages
+import NotificationManager from './components/notifications/NotificationManager';
+import CookieConsent from './components/common/CookieConsent';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import Home from './pages/Home';
-import About from './pages/About';
 import Properties from './pages/Properties';
-import PropertyDetail from './pages/PropertyDetail';
-import Contact from './pages/Contact';
+import PropertyDetail from './components/properties/PropertyDetail';
+import AddProperty from './pages/AddProperty';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import PhoneVerification from './components/auth/PhoneVerification';
+import Profile from './pages/Profile';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
-import AddProperty from './pages/AddProperty';
+import Chat from './components/chat/Chat';
+
 import PropertyAgent from './pages/PropertyAgent';
+import CookiePage from './pages/CookiePage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import CookieSettings from './pages/CookieSettings';
+import Help from './pages/Help';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import PropertyTypePage from './pages/PropertyTypePage';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
+import VerifyOTPPage from './pages/VerifyOTP';
 
-// Protected route
-import ProtectedRoute from './components/common/ProtectedRoute';
+// Styles
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
-// Context providers
-import { AuthProvider, useAuth, AuthContext } from './context/AuthContext';
+// AppContent component that uses authentication context
+const AppContent = () => {
+  const [isInitializing, setIsInitializing] = useState(() => {
+    // Don't show initializing state if we have a valid token
+    return !authStorage.hasValidToken();
+  });
+  const [hasError, setHasError] = useState(false);
+  const { user } = useAuth();
+  const { showChat, setShowChat } = useGlobalChat();
 
-function AppContent() {
-  const { currentUser, setUser } = useAuth();
-  const [chatOpen, setChatOpen] = useState(false);
-  const navigate = useNavigate();
+  // Ensure page scrolls to top on app initialization and refresh
+  useEffect(() => {
+    const handlePageLoad = () => {
+      window.scrollTo(0, 0);
+    };
+    
+    // Initial scroll to top
+    handlePageLoad();
+    
+    // Add event listener for page loads/refreshes
+    window.addEventListener('load', handlePageLoad);
+    
+    return () => {
+      window.removeEventListener('load', handlePageLoad);
+    };
+  }, []);
+
+  // Initialize WebSocket connection when user is authenticated
+  useEffect(() => {
+    if (user) {
+      // Connect to WebSocket server
+      websocketService.connect();
+      
+      // Cleanup on unmount
+      return () => {
+        websocketService.disconnect();
+      };
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (window.WOW) {
-      new window.WOW().init();
-    }
-
-    const handleSessionExpired = () => {
-      setUser(null);
-      navigate('/login');
+    const initializeApp = async () => {
+      try {
+        // Only check environment setup if we're not authenticated
+        if (!user && !authStorage.hasValidToken()) {
+          const isSetupValid = await checkEnvironmentSetup();
+          if (!isSetupValid) {
+            setHasError(true);
+            toast.error('Database connection failed. Please check your setup.');
+          }
+        }
+      } catch (error) {
+        console.error('Initialization error:', error);
+        // Don't show error if it's just an authentication error
+        if (!error.message?.includes('Authentication required')) {
+          setHasError(true);
+          toast.error('Failed to initialize the application.');
+        }
+      } finally {
+        setIsInitializing(false);
+      }
     };
 
-    window.addEventListener('sessionExpired', handleSessionExpired);
+    initializeApp();
+  }, [user]);
 
-    return () => {
-      window.removeEventListener('sessionExpired', handleSessionExpired);
-    };
-  }, [navigate, setUser]);
+  // Don't show loading spinner if we have a valid user
+  if (isInitializing && !user) {
+    return <LoadingSpinner fullScreen text="Initializing application..." />;
+  }
+
+  if (hasError && !user) {
+    return (
+      <div className="container mt-5">
+        <div className="alert alert-danger">
+          <h4 className="alert-heading">Connection Error</h4>
+          <p>Failed to connect to the database. Please check your environment setup and try again.</p>
+          <hr />
+          <p className="mb-0">
+            Need help? Check the README.md file or contact support.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container-xxl bg-white p-0">
-      <Spinner />
-      {!chatOpen && (
-        <Navbar onDirectMessagesClick={() => setChatOpen(true)} />
-      )}
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/properties" element={<Properties />} />
-        <Route path="/property/:id" element={<PropertyDetail />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/phone-verification" element={<PhoneVerification />} />
-        <Route 
-          path="/profile" 
-          element={
-            <ProtectedRoute>
-              <div>Profile Page (To be implemented)</div>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/favorites" 
-          element={
-            <ProtectedRoute>
-              <div>Favorites Page (To be implemented)</div>
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/add-property" element={<AddProperty />} />
-        <Route path="/property-agent" element={<PropertyAgent />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Footer />
+    <div className={`App ${showChat ? 'chat-open' : ''}`}>
+      <ToastContainer />
+      <CustomToastContainer />
+      <Navbar onChatOpen={() => setShowChat(true)} />
+      <NotificationManager />
+      
+      <main className="main-content">
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/properties" element={<Properties />} />
+          <Route path="/properties/type/:type" element={<PropertyTypePage />} />
+          <Route path="/properties/:id" element={<PropertyDetail />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-otp" element={<VerifyOTPPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/cookies" element={<CookiePage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/property-agent" element={<PropertyAgent />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/category/:category" element={<Blogs />} />
+          <Route path="/blogs/:slug" element={<BlogDetail />} />
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/add-property" element={<AddProperty />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings/cookies" element={<CookieSettings />} />
+          </Route>
+
+          {/* 404 Route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      <Chat />
+
       <BackToTop />
-      <SideChat open={chatOpen} onClose={() => setChatOpen(false)} currentUser={currentUser} />
-      <ToastContainer position="bottom-right" />
+      <Footer />
+      <CookieConsent />
     </div>
   );
-}
+};
 
+// Main App component that provides context
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
+    <ErrorBoundary>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
+        <AuthProvider>
+          <ThemeProvider>
+            <ApiProvider>
+              <NotificationProvider>
+                <DatabaseProvider>
+                  <ChatProvider>
+                    <GoogleMapsProvider>
+                      <AppContent />
+                    </GoogleMapsProvider>
+                  </ChatProvider>
+                </DatabaseProvider>
+              </NotificationProvider>
+            </ApiProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </Router>
-    </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

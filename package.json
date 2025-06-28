@@ -1,49 +1,76 @@
 {
   "name": "real-estate-react",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "A full-stack, modern real estate web application built with React for the frontend and Express.js with Supabase for the backend",
   "private": true,
+  "homepage": ".",
   "dependencies": {
-    "@emoji-mart/react": "^1.1.1",
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@supabase/supabase-js": "^2.49.4",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@react-google-maps/api": "^2.20.6",
+    "@supabase/gotrue-js": "^2.70.0",
+    "@supabase/realtime-js": "^2.11.10",
+    "@supabase/supabase-js": "^2.50.0",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "autoprefixer": "^10.4.21",
-    "axios": "^1.3.4",
+    "animate.css": "^4.1.1",
+    "axios": "^1.6.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "firebase": "^11.8.1",
+    "firebase": "^10.5.0",
+    "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",
-    "owl.carousel": "^2.3.4",
+    "lg-thumbnail": "^1.2.1",
+    "lg-zoom": "^1.3.0",
+    "lightgallery": "^2.8.3",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^18.2.0",
-    "react-owl-carousel": "^2.3.3",
-    "react-router-dom": "^6.9.0",
-    "react-scripts": "^5.0.1",
+    "react-hot-toast": "^2.5.2",
+    "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^6.17.0",
+    "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
     "react-toastify": "^11.0.5",
-    "sass": "^1.88.0",
+    "remark-gfm": "^4.0.1",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.2.6",
-    "twilio": "^5.6.1",
+    "swiper": "^11.2.8",
     "web-vitals": "^2.1.4",
-    "webpack-dev-server": "^5.2.1",
-    "wow.js": "^1.2.2",
-    "wowjs": "^1.1.3"
+    "winston": "^3.17.0",
+    "wow.js": "^1.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "concurrently \"npm start\" \"npm run server\"",
+    "server": "cd backend && npm run dev",
+    "install-all": "npm install && cd backend && npm install",
+    "build-all": "npm run build && cd backend && npm install --production",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write src/**/*.{js,jsx,json,css,md}",
+    "analyze": "npm run build && npx bundle-analyzer build/static/js/*.js",
+    "clean": "rm -rf build node_modules backend/node_modules",
+    "docker:build": "docker build -t real-estate-app .",
+    "docker:run": "docker run -p 80:80 real-estate-app",
+    "deploy": "npm run build && npm run docker:build",
+    "verify-env": "node scripts/verify-env.js",
+    "prestart": "npm run verify-env",
+    "prebuild": "npm run verify-env"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-console": "warn"
+    }
   },
   "browserslist": {
     "production": [
@@ -57,6 +84,35 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "/",
-  "proxy": "http://localhost:3001"
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.0.3"
+  },
+  "keywords": [
+    "real-estate",
+    "react",
+    "supabase",
+    "express",
+    "property-management",
+    "property-listing",
+    "real-estate-platform"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/real-estate-react.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/real-estate-react/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 }

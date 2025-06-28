@@ -71,15 +71,22 @@
 .nav-bar {
     position: relative;
     margin-top: 45px;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 0 3rem;
     transition: .5s;
     z-index: 9999;
+    background: #FFFFFF;
 }
 
 .nav-bar.sticky-top {
-    position: sticky;
+    position: fixed;
+    margin-top: 0;
+    top: 0;
     padding: 0;
     z-index: 9999;
+    background: #FFFFFF;
 }
 
 .navbar {

@@ -1,41 +1,162 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { endpoints } from '../../services/api'; // Add this import
-import { useAuth } from '../../context/AuthContext'; // Import your auth context
+import { endpoints } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Footer = () => {
   const thanksRef = useRef(null);
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const [hasSubmittedTestimonial, setHasSubmittedTestimonial] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const checkExistingTestimonial = async () => {
+    if (!isAuthenticated || !user) {
+      setHasSubmittedTestimonial(false);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await endpoints.testimonials.checkUserTestimonial();
+      if (response?.success) {
+        setHasSubmittedTestimonial(response.exists);
+      }
+    } catch (err) {
+      console.error('Error checking testimonial:', err);
+      setHasSubmittedTestimonial(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkExistingTestimonial();
+  }, [isAuthenticated, user]);
 
   const handleTestimonialSubmit = async (e) => {
     e.preventDefault();
-    const text = e.target.testimonialText.value;
+    
+    if (!isAuthenticated || !user) {
+      toast.error('Please log in to submit your testimonial.');
+      return;
+    }
+
+    // Check again if user has already submitted
+    try {
+      const checkResponse = await endpoints.testimonials.checkUserTestimonial();
+      if (checkResponse?.exists) {
+        toast.error('You have already submitted a testimonial.');
+        setHasSubmittedTestimonial(true);
+        return;
+      }
+    } catch (err) {
+      console.error('Error checking testimonial status:', err);
+    }
+
+    const content = e.target.testimonialText.value.trim();
     const rating = parseInt(e.target.testimonialRating.value, 10);
 
-    if (!text || !rating) {
-      alert('Please provide both testimonial text and a rating.');
+    // Form validation
+    if (!content) {
+      toast.error('Please provide your testimonial text.');
+      return;
+    }
+    if (!rating || rating < 1 || rating > 5) {
+      toast.error('Please select a valid rating between 1 and 5 stars.');
       return;
     }
 
     try {
-      await endpoints.addTestimonial({ text, rating });
-      if (thanksRef.current) {
-        thanksRef.current.classList.remove('d-none');
-        setTimeout(() => {
-          thanksRef.current.classList.add('d-none');
-          e.target.reset();
-        }, 2000);
+      const response = await endpoints.testimonials.create({ 
+        content, 
+        rating
+      });
+      
+      if (response?.success) {
+        toast.success('Thank you for your feedback! Your testimonial has been submitted successfully.');
+        setHasSubmittedTestimonial(true);
+        e.target.reset();
+      } else {
+        throw new Error(response?.message || 'Failed to submit testimonial');
       }
     } catch (err) {
-      // Show detailed error from backend if available
-      if (err.response && err.response.status === 401) {
-        alert('Your session has expired. Please log in again to submit your testimonial.');
-      } else if (err.response && err.response.data && err.response.data.message) {
-        alert('Failed to submit testimonial: ' + err.response.data.message);
-      } else {
-        alert('Failed to submit testimonial. Please try again.');
+      let errorMessage = 'Failed to submit testimonial. Please try again.';
+      
+      if (err.message === 'Please log in to submit your testimonial.') {
+        errorMessage = err.message;
+      } else if (err.message === 'You have already submitted a testimonial.') {
+        errorMessage = err.message;
+        setHasSubmittedTestimonial(true);
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
       }
+      
+      toast.error(errorMessage);
+      console.error('Testimonial submission error:', err);
     }
+  };
+
+  const renderTestimonialSection = () => {
+    if (!isAuthenticated) {
+      return (
+        <div className="alert alert-info">
+          <i className="fa fa-info-circle me-2"></i>
+          Please <Link to="/login" className="text-primary">log in</Link> to submit a testimonial.
+        </div>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <div className="text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (hasSubmittedTestimonial) {
+      return (
+        <div className="alert alert-success">
+          <i className="fa fa-check-circle me-2"></i>
+          Thank you for your feedback! Your testimonial has been submitted and is pending review.
+        </div>
+      );
+    }
+
+    return (
+      <form id="testimonialForm" className="rating-form-bg p-3 rounded" onSubmit={handleTestimonialSubmit}>
+        <div className="mb-2">
+          <textarea 
+            className="form-control" 
+            id="testimonialText" 
+            name="testimonialText" 
+            rows="2" 
+            placeholder="Your thoughts..." 
+            required
+          ></textarea>
+        </div>
+        <div className="mb-2">
+          <select 
+            className="form-select" 
+            id="testimonialRating" 
+            name="testimonialRating" 
+            required
+          >
+            <option value="">Rating</option>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+        </div>
+        <button type="submit" className="btn btn-primary w-100">Submit</button>
+      </form>
+    );
   };
 
   return (
@@ -44,8 +165,8 @@ const Footer = () => {
       data-wow-delay="0.1s"
     >
       <div className="container py-5">
-        <div className="row g-5 d-flex">
-          <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1">
+        <div className="row g-5">
+          <div className="col-lg-3 col-md-6">
             <h5 className="text-white mb-4">Get In Touch</h5>
             <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>Achrafieh, Charles Malek Avenue, Beirut, Lebanon</p>
             <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+961 1 234 567</p>
@@ -57,41 +178,19 @@ const Footer = () => {
               <a className="btn btn-outline-light btn-social" href="/" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
             </div>
           </div>
-          <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1">
+          <div className="col-lg-3 col-md-6">
             <h5 className="text-white mb-4">Quick Links</h5>
             <Link to="/about" className="btn btn-link text-white-50">About Us</Link>
             <Link to="/contact" className="btn btn-link text-white-50">Contact Us</Link>
             <Link to="/properties" className="btn btn-link text-white-50">Our Properties</Link>
-            <a className="btn btn-link text-white-50" href="/">Privacy Policy</a>
-            <a className="btn btn-link text-white-50" href="/">Terms & Condition</a>
+            <Link to="/privacy" className="btn btn-link text-white-50">Privacy Policy</Link>
+            <Link to="/terms" className="btn btn-link text-white-50">Terms & Condition</Link>
           </div>
-          <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1">
+          <div className="col-lg-3 col-md-6">
             <h5 className="text-white mb-4">Rate Us</h5>
-            {isAuthenticated() ? (
-              <form id="testimonialForm" className="rating-form-bg p-3 rounded" onSubmit={handleTestimonialSubmit}>
-                <div className="mb-2">
-                  <textarea className="form-control" id="testimonialText" rows="2" placeholder="Your thoughts..." required></textarea>
-                </div>
-                <div className="mb-2">
-                  <select className="form-select" id="testimonialRating" required>
-                    <option value="">Rating</option>
-                    <option value="5">★★★★★</option>
-                    <option value="4">★★★★☆</option>
-                    <option value="3">★★★☆☆</option>
-                    <option value="2">★★☆☆☆</option>
-                    <option value="1">★☆☆☆☆</option>
-                  </select>
-                </div>
-                <button type="submit" className="btn btn-primary w-100">Submit</button>
-                <div ref={thanksRef} id="testimonialThanks" className="alert alert-success mt-2 d-none" role="alert">
-                  Thank you for your feedback!
-                </div>
-              </form>
-            ) : (
-              <div className="alert alert-info">Please log in to submit a testimonial.</div>
-            )}
+            {renderTestimonialSection()}
           </div>
-          <div className="col-lg-3 col-md-6 d-flex flex-column flex-grow-1 align-items-md-center align-items-lg-start">
+          <div className="col-lg-3 col-md-6">
             <h5 className="text-white mb-4">Contact Hours</h5>
             <p className="mb-2"><i className="fa fa-clock me-3"></i>Mon - Fri: 9am - 6pm</p>
             <p className="mb-2"><i className="fa fa-clock me-3"></i>Sat: 10am - 2pm</p>
@@ -103,15 +202,14 @@ const Footer = () => {
         <div className="copyright">
           <div className="row">
             <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
-              &copy; <a className="border-bottom" href="#">Eskan Lebanon</a>, All Right Reserved.
-
+              &copy; <Link className="border-bottom" to="/">Eskan Lebanon</Link>, All Right Reserved.
             </div>
             <div className="col-md-6 text-center text-md-end">
               <div className="footer-menu">
-                <a href="/">Home</a>
-                <a href="#">Cookies</a>
-                <a href="#">Help</a>
-                <a href="#">FAQs</a>
+                <Link to="/">Home</Link>
+                <Link to="/cookies">Cookies</Link>
+                <Link to="/help">Help</Link>
+                <Link to="/contact#faqs">FAQs</Link>
               </div>
             </div>
           </div>
