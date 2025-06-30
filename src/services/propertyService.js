@@ -62,13 +62,14 @@ export const propertyService = {
           governorate: params.governorate || undefined,
           city: params.city || undefined,
           village: params.village || undefined,
-          minPrice: params.priceMin || undefined,
-          maxPrice: params.priceMax || undefined,
-          minArea: params.areaMin || undefined,
-          maxArea: params.areaMax || undefined,
+          priceMin: params.priceMin || undefined,
+          priceMax: params.priceMax || undefined,
+          areaMin: params.areaMin || undefined,
+          areaMax: params.areaMax || undefined,
           bedrooms: params.bedrooms || undefined,
           bathrooms: params.bathrooms || undefined,
           keyword: params.keyword || undefined,
+          features: params.features || undefined,
           sortBy: params.sortBy || 'newest'
         };
 

@@ -3,7 +3,6 @@ import { useToast } from '../../hooks/useToast';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import authStorage from '../../utils/authStorage';
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -74,20 +73,14 @@ const ChangePassword = () => {
       if (response.data?.success) {
         toast.success('Password changed successfully! You will be logged out for security reasons.');
         
-        // Clear tokens immediately after successful password change
-        authStorage.clearTokens();
-        
-        // Set a short timeout to allow the toast message to be seen
-        setTimeout(async () => {
-          // Logout the user
-          try {
-            await logout();
-          } catch (logoutError) {
-            console.error('Logout error after password change:', logoutError);
-            // Force navigation to login even if logout API call fails
-            navigate('/login');
-          }
-        }, 2000);
+        // Log the user out immediately (logout handles token clearing and navigation)
+        try {
+          await logout();
+        } catch (logoutError) {
+          console.error('Logout error after password change:', logoutError);
+          // Force navigation to login even if logout API call fails
+          navigate('/login');
+        }
       } else {
         throw new Error(response.data?.message || 'Failed to change password');
       }

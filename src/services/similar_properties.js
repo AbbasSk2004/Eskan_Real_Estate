@@ -24,7 +24,7 @@ const getSimilarProperties = async (propertyId, limit = 4) => {
   }
 
   try {
-    // Make request to the ML-powered recommendation endpoint
+    // Make request to the backend "similar-properties" endpoint which uses basic filtering (no ML involved)
     const response = await axios.get(`${API_BASE_URL}/similar-properties/${propertyId}`, {
       params: { limit },
       headers: {

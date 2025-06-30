@@ -68,33 +68,6 @@ const retryRequest = async (requestFn, maxRetries = 2, baseDelay = 1000) => {
   throw lastError;
 };
 
-const validateSettings = (settings) => {
-  const { notification_preferences } = settings;
-  
-  if (!notification_preferences) {
-    throw new Error('Invalid settings format: notification_preferences is required');
-  }
-
-  const requiredFields = [
-    'push_enabled',
-    'email_enabled',
-    'sms_enabled',
-    'notification_types',
-    'digest_settings',
-    'quiet_hours'
-  ];
-
-  const missingFields = requiredFields.filter(field => 
-    notification_preferences[field] === undefined
-  );
-
-  if (missingFields.length > 0) {
-    throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-  }
-
-  return true;
-};
-
 export const notificationService = {
   // Get all notifications for the current user
   getAllNotifications: async () => {
@@ -223,40 +196,6 @@ export const notificationService = {
     }
   },
 
-  // Get notification settings
-  getSettings: async (signal) => {
-    if (signal?.aborted) {
-      throw new Error('Request was cancelled');
-    }
-
-    const makeRequest = () => api.get('/notifications/settings', { 
-      signal,
-      timeout: 5000
-    });
-    
-    try {
-      const response = await retryRequest(makeRequest);
-      return { data: response.data.data, error: null };
-    } catch (error) {
-      if (error.name !== 'CanceledError' && error.name !== 'AbortError') {
-        console.error('Error fetching notification settings:', error);
-      }
-      return { data: null, error };
-    }
-  },
-
-  // Update notification settings
-  updateSettings: async (settings) => {
-    try {
-      validateSettings(settings);
-      const response = await api.put('/notifications/settings', settings);
-      return { data: response.data.data, error: null };
-    } catch (error) {
-      console.error('Error updating notification settings:', error);
-      return { data: null, error };
-    }
-  },
-
   // Delete notification
   delete: async (notificationId) => {
     const makeRequest = () => api.delete(`/notifications/${notificationId}`, {
@@ -373,42 +312,6 @@ export const notificationService = {
       formattedDate: created.toLocaleDateString(),
       formattedTime: created.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-  },
-
-  // Check if notification should be shown based on settings
-  shouldShowNotification: (notification, settings) => {
-    if (!settings) return true;
-    
-    // Check notification type settings
-    const typeEnabled = settings[`${notification.type}_enabled`] !== false;
-    if (!typeEnabled) return false;
-    
-    // Check quiet hours
-    if (settings.quiet_hours_enabled) {
-      const now = new Date();
-      const currentHour = now.getHours();
-      const currentMinute = now.getMinutes();
-      const currentTime = currentHour * 60 + currentMinute;
-      
-      const [startHour, startMinute] = settings.quiet_hours_start.split(':').map(Number);
-      const [endHour, endMinute] = settings.quiet_hours_end.split(':').map(Number);
-      const startTime = startHour * 60 + startMinute;
-      const endTime = endHour * 60 + endMinute;
-      
-      if (startTime <= endTime) {
-        // Same day quiet hours
-        if (currentTime >= startTime && currentTime <= endTime) {
-          return false;
-        }
-      } else {
-        // Overnight quiet hours
-        if (currentTime >= startTime || currentTime <= endTime) {
-          return false;
-        }
-      }
-    }
-    
-    return true;
   }
 };
 

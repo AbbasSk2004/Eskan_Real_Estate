@@ -4,7 +4,6 @@ import StatsCard from './StatsCard';
 import QuickActions from './QuickActions';
 import { endpoints } from '../../services/api';
 import { useToast } from '../../hooks/useToast';
-import LoadingSpinner from '../common/LoadingSpinner';
 import authStorage from '../../utils/authStorage';
 
 const OverviewTab = ({ agentApplication }) => {
@@ -172,13 +171,7 @@ const OverviewTab = ({ agentApplication }) => {
                          style={{ width: '60px', height: '60px' }}>
                       <i className={`fas ${stat.icon} text-white fa-2x`}></i>
                     </div>
-                    <h3 className={stat.iconColor}>
-                      {stat.loading ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        stat.count
-                      )}
-                    </h3>
+                    <h3 className={stat.iconColor}>{stat.count}</h3>
                     <p className="text-muted mb-0">{stat.label}</p>
                   </div>
                 </div>

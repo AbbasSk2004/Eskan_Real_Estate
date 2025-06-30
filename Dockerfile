@@ -6,11 +6,9 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY backend/package*.json ./backend/
 
 # Install dependencies
-RUN npm ci --only=production --silent
-RUN cd backend && npm ci --only=production --silent
+RUN npm ci --silent
 
 # Copy source code
 COPY . .
@@ -21,40 +19,35 @@ RUN npm run build
 # Production stage with Nginx
 FROM nginx:stable-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Copy custom nginx configuration
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built React app to nginx html directory
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy backend files for API server (if running in same container)
-COPY --from=build /app/backend /app/backend
+# Create non-root user
+RUN addgroup -g 101 -S nginx && \
+    adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx
 
-# Install Node.js in the nginx container for running the backend
-RUN apk add --no-cache nodejs npm
+# Set proper permissions
+RUN chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid && \
+    chown -R nginx:nginx /usr/share/nginx/html
 
-# Create a startup script
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'cd /app/backend && node index.js &' >> /start.sh && \
-    echo 'nginx -g "daemon off;"' >> /start.sh && \
-    chmod +x /start.sh
+USER nginx
 
-# Expose ports
-EXPOSE 80 5000
+# Expose port
+EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/ || exit 1
 
-# Start both nginx and the backend API
-CMD ["/start.sh"]
-
-# Alternative: Separate containers approach
-# If you prefer to run frontend and backend in separate containers,
-# uncomment the following and comment out the above:
-
-# FROM nginx:stable-alpine
-# COPY --from=build /app/build /usr/share/nginx/html
-# COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-# EXPOSE 80
-# CMD ["nginx", "-g", "daemon off;"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

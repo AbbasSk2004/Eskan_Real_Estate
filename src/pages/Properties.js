@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import { propertyService } from '../services/propertyService';
 import '../assets/css/properties.css';
 import { useDebounce } from '../hooks/useDebounce';
+import { COMMON_FEATURES } from '../utils/propertyTypeFields';
 
 const Properties = () => {
   const [properties, setProperties] = useState([]);
@@ -61,7 +62,13 @@ const Properties = () => {
         ...(filters.areaMin && { areaMin: Number(filters.areaMin) }),
         ...(filters.areaMax && { areaMax: Number(filters.areaMax) }),
         ...(filters.bedrooms && { bedrooms: Number(filters.bedrooms) }),
-        ...(filters.bathrooms && { bathrooms: Number(filters.bathrooms) })
+        ...(filters.bathrooms && { bathrooms: Number(filters.bathrooms) }),
+        // Build features list from filters (keys matching COMMON_FEATURES with truthy value)
+        ...(() => {
+          const featureKeys = Object.keys(COMMON_FEATURES);
+          const selected = featureKeys.filter(key => filters[key]);
+          return selected.length ? { features: selected.join(',') } : {};
+        })()
       };
 
       const response = await propertyService.getProperties(params);
@@ -239,16 +246,8 @@ const Properties = () => {
             <div className="col-lg-3">
               <div className="card shadow-sm">
                 <div className="card-body">
-                  <div className="d-flex justify-content-between align-items-center mb-4">
+                  <div className="d-flex align-items-center mb-4">
                     <h5 className="card-title mb-0">Filters</h5>
-                    {getActiveFiltersCount() > 0 && (
-                      <button 
-                        className="btn btn-link text-danger p-0" 
-                        onClick={handleResetFilters}
-                      >
-                        Reset All
-                      </button>
-                    )}
                   </div>
                   <PropertyFilters
                     onFilterChange={handleFilterChange}

@@ -27,12 +27,10 @@ class AuthService {
       const token = authStorage.getToken('access_token');
       if (!token) return;
 
-      const payload = JSON.stringify({ token, status });
-
       // Use sendBeacon for inactive status (often called during unload)
       if (status === 'inactive' && navigator.sendBeacon) {
         const endpoint = `${API_BASE_URL}/auth/update-status`;
-        const blob = new Blob([payload], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify({ status })], { type: 'application/json' });
         navigator.sendBeacon(endpoint, blob);
         return;
       }
@@ -41,9 +39,10 @@ class AuthService {
       await fetch(`${API_BASE_URL}/auth/update-status`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: payload,
+        body: JSON.stringify({ status }),
         keepalive: true
       });
     } catch (err) {
@@ -154,6 +153,15 @@ class AuthService {
       authStorage.setAuthProvider('backend');
       authStorage.setTokens(session.access_token, session.refresh_token, remember);
       authStorage.setUserData(user);
+
+      // Mark user as active right after storing the session so that the
+      // status is updated even before React context effects run.
+      try {
+        await this.updateStatus('active');
+      } catch (_) {
+        // Non-blocking – avoid failing the login flow due to a status hiccup.
+      }
+
       return { success: true, user, token: session.access_token };
     }
     throw new Error(response.data?.message || 'Login failed');

@@ -106,10 +106,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/real-estate-react.git"
+    "url": "https://github.com/AbbasSk2004/ESKAN_Real_Estate.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/real-estate-react/issues"
+    "url": "https://github.com/AbbasSk2004/ESKAN_Real_Estate/issues"
   },
   "engines": {
     "node": ">=16.0.0",

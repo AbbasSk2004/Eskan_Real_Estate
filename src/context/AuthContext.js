@@ -52,6 +52,15 @@ export const AuthProvider = ({ children }) => {
         updateUserState(response.user);
         // Initialize token refresh
         await authService.initializeTokenRefresh();
+        
+        // Explicitly update status to active after successful login
+        try {
+          await authService.updateStatus('active');
+        } catch (statusError) {
+          console.error('Failed to update status to active:', statusError);
+          // Non-blocking - continue with login process
+        }
+        
         return response;
       }
       throw new Error(response.message || 'Login failed');
@@ -94,23 +103,9 @@ export const AuthProvider = ({ children }) => {
       // Call the logout endpoint first
       await authService.logout();
       
-      // Update user status to inactive if we have a token
-      if (token) {
-        try {
-          const payload = JSON.stringify({ token, status: 'inactive' });
-          await fetch(`${API_BASE_URL}/auth/update-status`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: payload,
-            keepalive: true
-          });
-        } catch (statusError) {
-          console.error('Error updating status during logout:', statusError);
-          // Continue with logout even if status update fails
-        }
-      }
+      // authService.logout() already attempted to mark the user inactive.
+      // We skip an additional request here to avoid duplicate /auth/update-status
+      // calls that can trigger warnings once the token is invalidated.
       
       // Clear all auth data
       authStorage.clearAll();

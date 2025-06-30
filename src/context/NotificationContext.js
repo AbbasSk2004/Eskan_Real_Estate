@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useToast } from '../hooks/useToast';
 import notificationService from '../services/notificationService';
 import { debounce } from 'lodash';
@@ -30,7 +29,6 @@ const NOTIFICATION_ACTIONS = {
   MARK_AS_READ: 'MARK_AS_READ',
   MARK_ALL_AS_READ: 'MARK_ALL_AS_READ',
   SET_UNREAD_COUNT: 'SET_UNREAD_COUNT',
-  SET_SETTINGS: 'SET_SETTINGS',
   SET_ERROR: 'SET_ERROR',
   CLEAR_ERROR: 'CLEAR_ERROR'
 };
@@ -50,18 +48,6 @@ const initialState = {
       high: 0,
       medium: 0,
       low: 0
-    }
-  },
-  settings: {
-    enableBrowserNotifications: true,
-    enableEmailNotifications: true,
-    enableSoundNotifications: true,
-    enablePushNotifications: false,
-    notificationTypes: {
-      [NOTIFICATION_TYPES.MESSAGE]: true,
-      [NOTIFICATION_TYPES.PROPERTY_UPDATE]: true,
-      [NOTIFICATION_TYPES.INQUIRY]: true,
-      [NOTIFICATION_TYPES.FAVORITE]: true
     }
   }
 };
@@ -150,12 +136,6 @@ const notificationReducer = (state, action) => {
     case NOTIFICATION_ACTIONS.SET_UNREAD_COUNT:
       return { ...state, unreadCount: action.payload };
 
-    case NOTIFICATION_ACTIONS.SET_SETTINGS:
-      return { 
-        ...state, 
-        settings: { ...state.settings, ...action.payload }
-      };
-
     case NOTIFICATION_ACTIONS.SET_ERROR:
       return { ...state, error: action.payload, loading: false };
 
@@ -171,19 +151,11 @@ const notificationReducer = (state, action) => {
 export const NotificationProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notificationReducer, initialState);
   const { user, isAuthenticated } = useAuth();
-  const [storedSettings, setStoredSettings] = useLocalStorage('notificationSettings', initialState.settings);
   const [shouldFetch, setShouldFetch] = useState(false);
   const toast = useToast();
   const abortControllerRef = useRef(null);
   const hasAttemptedFetch = useRef(false);
   const isMountedRef = useRef(true);
-
-  // Initialize settings from localStorage
-  useEffect(() => {
-    if (storedSettings) {
-      dispatch({ type: NOTIFICATION_ACTIONS.SET_SETTINGS, payload: storedSettings });
-    }
-  }, [storedSettings]);
 
   // Cleanup function for aborting pending requests
   const cleanup = useCallback(() => {
@@ -255,41 +227,19 @@ export const NotificationProvider = ({ children }) => {
     [isAuthenticated, user?.id, shouldFetch]
   );
 
-  // Fetch notification settings with debouncing
-  const fetchSettings = useCallback(
-    debounce(async () => {
-      if (!isAuthenticated || !user?.id || !shouldFetch || !isMountedRef.current) return;
-
-      try {
-        const { data, error } = await notificationService.getSettings();
-        if (error) throw error;
-
-        if (data?.success && data?.data?.settings && isMountedRef.current) {
-          dispatch({ type: NOTIFICATION_ACTIONS.SET_SETTINGS, payload: data.data.settings });
-          setStoredSettings(data.data.settings);
-        }
-      } catch (error) {
-        console.error('Error fetching notification settings:', error);
-      }
-    }, 1000), // 1 second debounce
-    [isAuthenticated, user?.id, setStoredSettings, shouldFetch]
-  );
-
   // Effect for fetching notifications
   useEffect(() => {
     if (isAuthenticated && user?.id && shouldFetch) {
       fetchNotifications();
       fetchUnreadCount();
-      fetchSettings();
     }
 
     return () => {
       cleanup();
       fetchNotifications.cancel();
       fetchUnreadCount.cancel();
-      fetchSettings.cancel();
     };
-  }, [isAuthenticated, user?.id, fetchNotifications, fetchUnreadCount, fetchSettings, cleanup, shouldFetch]);
+  }, [isAuthenticated, user?.id, fetchNotifications, fetchUnreadCount, cleanup, shouldFetch]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -344,45 +294,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }, [toast]);
 
-  // Update notification settings
-  const updateSettings = useCallback(async (newSettings) => {
-    try {
-      const { data, error } = await notificationService.updateSettings(newSettings);
-      
-      if (error) {
-        throw error;
-      }
-
-      // Extract the preferences from the response or the input
-      const preferences = data?.notification_preferences || newSettings.notification_preferences;
-      
-      // Convert the API response format to our local settings format
-      const localSettings = {
-        push_notifications: preferences.push_enabled,
-        email_notifications: preferences.email_enabled,
-        sms_notifications: preferences.sms_enabled,
-        chat_messages: preferences.notification_types.chat_messages,
-        property_updates: preferences.notification_types.property_updates,
-        system_updates: preferences.notification_types.system_updates,
-        marketing_emails: preferences.notification_types.marketing,
-        weekly_digest: preferences.digest_settings.weekly_digest,
-        instant_notifications: preferences.digest_settings.instant_notifications,
-        quiet_hours_enabled: preferences.quiet_hours.enabled,
-        quiet_hours_start: preferences.quiet_hours.start_time,
-        quiet_hours_end: preferences.quiet_hours.end_time
-      };
-
-      dispatch({ type: NOTIFICATION_ACTIONS.SET_SETTINGS, payload: localSettings });
-      setStoredSettings(localSettings);
-      toast.success('Notification settings updated successfully');
-      return { success: true };
-    } catch (error) {
-      console.error('Error updating notification settings:', error);
-      toast.error(error.message || 'Failed to update notification settings');
-      throw error;
-    }
-  }, [setStoredSettings, toast]);
-
   // ---------------------------------------------
   // WebSocket integration: subscribe to realtime events
   useEffect(() => {
@@ -433,8 +344,6 @@ export const NotificationProvider = ({ children }) => {
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    updateSettings,
-    fetchSettings,
     fetchNotifications: () => {
       hasAttemptedFetch.current = false;
       setShouldFetch(true);

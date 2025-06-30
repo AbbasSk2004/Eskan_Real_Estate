@@ -386,10 +386,6 @@ function AddPropertyForm({ onSubmitSuccess }) {
     setMissingFields([]);
 
     try {
-      // Log the current form state
-      console.log('Current form state:', form);
-      console.log('Current extra fields:', extraFields);
-
       // Validate form
       const validationResult = validateForm();
       if (!validationResult.isValid) {
@@ -446,15 +442,12 @@ function AddPropertyForm({ onSubmitSuccess }) {
 
       // Special handling for Farm property type
       if (form.propertyType === 'Farm') {
-        console.log('Processing Farm fields...');
         // Explicitly handle Farm-specific fields
         if (extraFields.waterSource) {
-          console.log('Adding water_source:', extraFields.waterSource);
           formData.append('water_source', extraFields.waterSource);
         }
         
         if (extraFields.cropTypes) {
-          console.log('Adding crop_types:', extraFields.cropTypes);
           formData.append('crop_types', extraFields.cropTypes);
         }
       }
@@ -508,23 +501,6 @@ function AddPropertyForm({ onSubmitSuccess }) {
       if (form.location_url) {
         formData.append('location_url', form.location_url);
       }
-
-      // Log detailed form data for debugging
-      console.log('Form data being sent:');
-      for (let [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`${key}: File - ${value.name} (${value.type})`);
-        } else {
-          console.log(`${key}: ${value}`);
-        }
-      }
-
-      // Log required fields check
-      const requiredFields = ['title', 'property_type', 'price', 'governate', 'city', 'address', 'description', 'area'];
-      console.log('Required fields check:');
-      requiredFields.forEach(field => {
-        console.log(`${field}: ${formData.get(field)}`);
-      });
 
       // Make API call with proper error handling
       const response = await propertyService.createProperty(formData);

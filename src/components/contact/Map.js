@@ -14,14 +14,22 @@ const MapContent = React.memo(({
   const { isLoaded } = useGoogleMaps();
   const [mapReady, setMapReady] = useState(false);
   
-  // Create unique map ID based on center coordinates and markers
-  const mapId = useMemo(() => {
-    const coords = markers.length > 0 ? markers[0] : center;
-    return `contact-map-${coords.lat}-${coords.lng}`;
-  }, [center, markers]);
+  // Use only the numeric center coordinates for a stable mapId and dependency tracking
+  const mapId = useMemo(() => `contact-map-${center.lat}-${center.lng}`, [center.lat, center.lng]);
 
   const { isInitialized, setInitialized, mapInstance, setMapInstance } = useMapState(mapId);
   const markersRef = useRef([]);
+
+  // Create a stable key that only changes when the logical set of markers changes
+  // (lat/lng pairs). This prevents the marker-update effect from running solely
+  // because a new [] reference was created by the calling component on each
+  // render.
+  const markersKey = useMemo(() => {
+    if (!markers || markers.length === 0) return '';
+    // Order does not matter for a single default marker scenario but for safety
+    // we keep original order; join lat/lng pairs into a string.
+    return markers.map(m => `${m.lat}-${m.lng}`).join('|');
+  }, [markers]);
 
   // Cleanup function
   const cleanup = () => {
@@ -99,7 +107,7 @@ const MapContent = React.memo(({
     }
 
     return cleanup;
-  }, [center, zoom, showControls, markers, isLoaded, isInitialized, setMapInstance, setInitialized]);
+  }, [center.lat, center.lng, zoom, showControls, isLoaded]);
 
   // Update markers when they change
   useEffect(() => {
@@ -137,7 +145,7 @@ const MapContent = React.memo(({
     }
 
     markersRef.current = newMarkers;
-  }, [markers, mapInstance, isInitialized, center]);
+  }, [markersKey, mapInstance, isInitialized, center.lat, center.lng]);
 
   // Always render MapContainer and the inner div so the ref is available
   return (
