@@ -154,7 +154,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
           <div className="card-body">
             <div className="row g-3">
               {/* Keyword Search */}
-              <div className="col-md-4">
+              <div className="col-12 col-sm-6 col-md-4">
                 <label className="form-label">Search</label>
                 <div className="input-group">
                   <span className="input-group-text">
@@ -172,7 +172,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
               </div>
 
               {/* Property Type */}
-              <div className="col-md-2">
+              <div className="col-6 col-md-2">
                 <label className="form-label">Type</label>
                 <select
                   className="form-select"
@@ -197,7 +197,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
               </div>
 
               {/* Status */}
-              <div className="col-md-2">
+              <div className="col-6 col-md-2">
                 <label className="form-label">Status</label>
                 <select
                   className="form-select"
@@ -211,7 +211,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
               </div>
 
               {/* Governorate */}
-              <div className="col-md-2">
+              <div className="col-6 col-md-2">
                 <label className="form-label">Governorate</label>
                 <select
                   className="form-select"
@@ -229,7 +229,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
               </div>
 
               {/* City */}
-              <div className="col-md-2">
+              <div className="col-6 col-md-2">
                 <label className="form-label">City</label>
                 <select
                   className="form-select"
@@ -268,7 +268,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                   <div className="mt-3 pt-3 border-top">
                     <div className="row g-3">
                       {/* Price Range */}
-                      <div className="col-md-3">
+                      <div className="col-12 col-sm-6 col-md-3">
                         <label className="form-label">Price Range</label>
                         <select
                           className="form-select"
@@ -282,7 +282,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                       </div>
 
                       {/* Bedrooms */}
-                      <div className="col-md-3">
+                      <div className="col-12 col-sm-6 col-md-3">
                         <label className="form-label">Min Bedrooms</label>
                         <select
                           className="form-select"
@@ -299,7 +299,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                       </div>
 
                       {/* Bathrooms */}
-                      <div className="col-md-3">
+                      <div className="col-12 col-sm-6 col-md-3">
                         <label className="form-label">Min Bathrooms</label>
                         <select
                           className="form-select"
@@ -315,7 +315,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                       </div>
 
                       {/* Area Range */}
-                      <div className="col-md-3">
+                      <div className="col-12 col-sm-6 col-md-3">
                         <label className="form-label">Area (m²)</label>
                         <select
                           className="form-select"
@@ -338,7 +338,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                         <h6 className="mb-3">Features & Amenities</h6>
                         <div className="row g-2">
                           {/* Essential Features */}
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-6">
                             <h6 className="small text-muted mb-2">Essential</h6>
                             <div className="row g-2">
                               {[
@@ -371,7 +371,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                           </div>
 
                           {/* Luxury Features */}
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-6">
                             <h6 className="small text-muted mb-2">Luxury & Comfort</h6>
                             <div className="row g-2">
                               {[
@@ -419,7 +419,7 @@ const PropertySearch = ({ filters, setFilters, onSearch, showAdvanced = true }) 
                             { key: 'near_malls', label: 'Near Malls', icon: 'fa-shopping-bag' },
                             { key: 'near_public_transport', label: 'Near Public Transport', icon: 'fa-bus' },
                           ].map(feature => (
-                            <div key={feature.key} className="col-md-4 col-6">
+                            <div key={feature.key} className="col-12 col-sm-6 col-md-4">
                               <div className="form-check">
                                 <input
                                   className="form-check-input"

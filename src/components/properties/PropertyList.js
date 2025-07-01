@@ -11,7 +11,7 @@ const PropertyList = ({ properties, pagination, onPageChange, loading, viewMode 
   const renderGridView = () => (
     <div className="row g-4">
       {properties.map(property => (
-        <div key={property.id} className="col-lg-4 col-md-6">
+        <div key={property.id} className="col-12 col-sm-6 col-md-6 col-lg-4">
           <PropertyCard property={property} viewMode="grid" />
         </div>
       ))}

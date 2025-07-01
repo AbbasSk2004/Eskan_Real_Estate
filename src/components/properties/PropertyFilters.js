@@ -26,6 +26,8 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
   const [cityDisabled, setCityDisabled] = useState(true);
   const [villageDisabled, setVillageDisabled] = useState(true);
 
+  const [filtersOpen, setFiltersOpen] = useState(true);
+
   // Get current property type configuration
   const typeConfig = PROPERTY_TYPE_FIELDS[filters.propertyType] || {
     details: [],
@@ -128,12 +130,17 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
       <div className="accordion" id="filterAccordion">
         <div className="accordion-item border-0">
           <div className="accordion-header">
-            <button className="accordion-button shadow-none ps-0" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" aria-expanded="true">
+            <button
+              className={`accordion-button shadow-none ps-0 ${filtersOpen ? '' : 'collapsed'}`}
+              type="button"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen(prev => !prev)}
+            >
               <h5 className="mb-0">Filter Properties</h5>
             </button>
           </div>
           
-          <div id="filtersCollapse" className="accordion-collapse collapse show">
+          <div id="filtersCollapse" className={`accordion-collapse collapse ${filtersOpen ? 'show' : ''}`}>
             <div className="accordion-body px-0">
               {/* Property Type */}
               <div className="mb-4">
@@ -221,7 +228,7 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
               <div className="mb-4">
                 <label className="form-label text-dark fw-semibold">Price Range (USD)</label>
                 <div className="row g-2">
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <input
                       type="number"
                       name="priceMin"
@@ -232,7 +239,7 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
                       min="0"
                     />
                   </div>
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <input
                       type="number"
                       name="priceMax"
@@ -250,7 +257,7 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
               <div className="mb-4">
                 <label className="form-label text-dark fw-semibold">Area (m²)</label>
                 <div className="row g-2">
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <input
                       type="number"
                       name="areaMin"
@@ -261,7 +268,7 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
                       min="0"
                     />
                   </div>
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <input
                       type="number"
                       name="areaMax"
@@ -317,7 +324,7 @@ const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {
                   <label className="form-label text-dark fw-semibold">Features</label>
                   <div className="row g-2">
                     {typeConfig.features.map(feature => (
-                      <div key={feature} className="col-6">
+                      <div key={feature} className="col-12 col-sm-6">
                         <div className="form-check">
                           <input
                             type="checkbox"

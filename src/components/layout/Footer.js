@@ -166,19 +166,19 @@ const Footer = () => {
     >
       <div className="container py-5">
         <div className="row g-5">
-          <div className="col-lg-3 col-md-6">
+          <div className="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0 text-center text-sm-start">
             <h5 className="text-white mb-4">Get In Touch</h5>
             <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>Achrafieh, Charles Malek Avenue, Beirut, Lebanon</p>
             <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+961 1 234 567</p>
             <p className="mb-2"><i className="fa fa-envelope me-3"></i>info@eskan-lebanon.com</p>
-            <div className="d-flex pt-2">
+            <div className="d-flex pt-2 justify-content-center justify-content-sm-start">
               <a className="btn btn-outline-light btn-social" href="/" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
               <a className="btn btn-outline-light btn-social" href="/" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
               <a className="btn btn-outline-light btn-social" href="/" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
               <a className="btn btn-outline-light btn-social" href="/" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
             </div>
           </div>
-          <div className="col-lg-3 col-md-6">
+          <div className="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0 text-center text-sm-start">
             <h5 className="text-white mb-4">Quick Links</h5>
             <Link to="/about" className="btn btn-link text-white-50">About Us</Link>
             <Link to="/contact" className="btn btn-link text-white-50">Contact Us</Link>
@@ -186,11 +186,11 @@ const Footer = () => {
             <Link to="/privacy" className="btn btn-link text-white-50">Privacy Policy</Link>
             <Link to="/terms" className="btn btn-link text-white-50">Terms & Condition</Link>
           </div>
-          <div className="col-lg-3 col-md-6">
+          <div className="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0 text-center text-sm-start">
             <h5 className="text-white mb-4">Rate Us</h5>
             {renderTestimonialSection()}
           </div>
-          <div className="col-lg-3 col-md-6">
+          <div className="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0 text-center text-sm-start">
             <h5 className="text-white mb-4">Contact Hours</h5>
             <p className="mb-2"><i className="fa fa-clock me-3"></i>Mon - Fri: 9am - 6pm</p>
             <p className="mb-2"><i className="fa fa-clock me-3"></i>Sat: 10am - 2pm</p>
