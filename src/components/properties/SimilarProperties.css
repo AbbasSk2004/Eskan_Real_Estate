@@ -36,4 +36,10 @@
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+@media (max-width: 576px) {
+  .similar-properties .card {
+    max-width: 100% !important;
+  }
 } 

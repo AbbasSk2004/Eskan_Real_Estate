@@ -26,6 +26,16 @@
   }
 }
 
+@media (max-width: 576px) {
+  .main-image-wrapper {
+    height: 230px;
+  }
+
+  .thumbnails-grid {
+    height: 160px;
+  }
+}
+
 .main-image-wrapper {
   flex-basis: 50%;
   cursor: pointer;

@@ -1,13 +1,12 @@
 .search-bar {
   position: relative;
-  width: 600px;  /* Set specific width */
-  margin: 2px;     /* Reset margin */
-  padding: 0;    /* Reset padding */
+  width: 100%;            /* Full width on all screens */
+  max-width: 600px;       /* Optional cap for large screens */
   margin-bottom: 1rem;
 }
 
 .search-bar .input-group {
-  width: 500px;  /* Match parent width */
+  width: 100%;            /* Inherit full width of parent */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
