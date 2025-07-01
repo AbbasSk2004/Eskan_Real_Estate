@@ -84,7 +84,7 @@ const Navbar = ({ onChatOpen }) => {
           <div className="p-2 me-2">
             <img 
               className="img-fluid" 
-              src="/Copilot_20250628_014309.png" 
+              src={process.env.PUBLIC_URL + '/Copilot_20250628_014309.png'} 
               alt="Logo" 
               style={{ 
                 width: '40px', 
