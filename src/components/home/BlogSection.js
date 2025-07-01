@@ -46,18 +46,18 @@ const BlogSection = () => {
   return (
     <section className="blog-section py-5">
       <div className="container">
-      <div className="blog-title-wrapper mb-5 wow fadeInUp" data-wow-delay="0.1s">
-  <div className="blog-title-container">
-    <div className="blog-line" />
-    <h2 className="blog-title">Latest Blog Posts</h2>
-    <div className="blog-line" />
-  </div>
-  <p className="blog-subtitle">Stay updated with our latest news and insights</p>
-</div>
+        <div className="blog-title-wrapper mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s">
+          <div className="blog-title-container">
+            <div className="blog-line" />
+            <h2 className="blog-title">Latest Blog Posts</h2>
+            <div className="blog-line" />
+          </div>
+          <p className="blog-subtitle">Stay updated with our latest news and insights</p>
+        </div>
 
-        <div className="row">
+        <div className="row g-3 g-md-4">
           {blogs.map(blog => (
-            <div key={blog.id} className="col-md-4 mb-4">
+            <div key={blog.id} className="col-12 col-sm-6 col-lg-4 mb-3 mb-md-4">
               <BlogCard blog={blog} />
             </div>
           ))}

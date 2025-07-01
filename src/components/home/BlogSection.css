@@ -112,4 +112,88 @@
 .blog-item .btn:hover {
   background: var(--dark);
   border-color: var(--dark);
+}
+
+/* Medium screens */
+@media (max-width: 992px) {
+  .blog-title {
+    font-size: 2.2rem;
+  }
+  
+  .blog-line {
+    max-width: 150px;
+  }
+  
+  .blog-subtitle {
+    font-size: 1rem;
+  }
+  
+  .blog-item .position-relative {
+    height: 220px;
+  }
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+  .blog-title-container {
+    gap: 15px;
+  }
+  
+  .blog-title {
+    font-size: 1.8rem;
+  }
+  
+  .blog-line {
+    max-width: 100px;
+  }
+  
+  .blog-subtitle {
+    font-size: 0.95rem;
+    padding: 0 15px;
+  }
+  
+  .blog-item .blog-overlay {
+    padding: 20px;
+  }
+  
+  .blog-item .position-relative {
+    height: 200px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+  .blog-title-container {
+    gap: 10px;
+  }
+  
+  .blog-title {
+    font-size: 1.5rem;
+  }
+  
+  .blog-line {
+    max-width: 60px;
+  }
+  
+  .blog-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .blog-item .position-relative {
+    height: 180px;
+  }
+  
+  .blog-item h5 {
+    font-size: 1.1rem;
+  }
+  
+  .blog-item p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .blog-item .btn {
+    padding: 6px 15px;
+    font-size: 0.85rem;
+  }
 } 

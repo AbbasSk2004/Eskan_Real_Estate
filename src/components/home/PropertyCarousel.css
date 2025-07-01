@@ -8,7 +8,7 @@
 
 /* Carousel Section Styles */
 .carousel-section {
-  margin: 60px 0;
+  margin: 50px 0;
   padding: 0 15px;
   background-color: #fff;
 }
@@ -55,7 +55,7 @@
 
 /* Carousel Container Styles */
 .carousel-container {
-  width: 80% !important;
+  width: 90% !important;
   margin: 0 auto !important;
   border-radius: 15px;
   overflow: hidden;
@@ -190,9 +190,13 @@
 }
 
 /* Responsive Styles */
-@media (max-width: 992px) {
-  .carousel-image-container {
-    padding-top: 60%;
+@media (max-width: 1200px) {
+  .carousel-title {
+    font-size: 2.2rem !important;
+  }
+  
+  .carousel-line {
+    max-width: 150px;
   }
   
   .carousel-caption h3 {
@@ -200,28 +204,136 @@
   }
 }
 
+@media (max-width: 992px) {
+  .carousel-section {
+    margin: 40px 0;
+  }
+  
+  .carousel-container {
+    width: 95% !important;
+  }
+  
+  .carousel-image-container {
+    padding-top: 60%;
+  }
+  
+  .carousel-title {
+    font-size: 1.8rem !important;
+  }
+  
+  .carousel-line {
+    max-width: 120px;
+  }
+  
+  .carousel-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  .carousel-caption h3 {
+    font-size: 1.6rem !important;
+  }
+  
+  .carousel-caption p {
+    font-size: 1rem !important;
+  }
+  
+  .carousel-caption .btn {
+    padding: 6px 15px !important;
+    font-size: 0.9rem !important;
+    bottom: 30px !important;
+  }
+}
+
 @media (max-width: 768px) {
+  .carousel-section {
+    margin: 30px 0;
+  }
+  
+  .carousel-title-container {
+    gap: 15px;
+  }
+  
+  .carousel-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .carousel-line {
+    max-width: 80px;
+  }
+  
+  .carousel-subtitle {
+    font-size: 0.9rem !important;
+  }
+  
   .carousel-image-container {
     padding-top: 70%;
   }
   
   .carousel-caption .caption-content {
-    padding: 15px !important;
+    padding: 20px !important;
+    max-width: 90% !important;
   }
   
   .carousel-caption h3 {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
+    margin-bottom: 5px !important;
   }
   
   .carousel-caption p {
     font-size: 0.9rem !important;
     margin-bottom: 10px !important;
   }
+  
+  .carousel-caption .btn {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    align-self: flex-start !important;
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  .carousel-indicators {
+    bottom: 10px !important;
+  }
+  
+  .carousel-indicators button {
+    width: 10px !important;
+    height: 10px !important;
+    margin: 0 3px !important;
+  }
 }
 
 @media (max-width: 576px) {
-  .carousel-section .section-title h2 {
-    font-size: 2rem !important;
+  .carousel-section {
+    margin: 25px 0;
+    padding: 0 10px;
+  }
+  
+  .carousel-container {
+    width: 100% !important;
+    border-radius: 10px;
+  }
+  
+  .carousel-title-container {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .carousel-title {
+    font-size: 1.3rem !important;
+  }
+  
+  .carousel-line {
+    max-width: 60px;
+  }
+  
+  .carousel-subtitle {
+    font-size: 0.85rem !important;
   }
   
   .carousel-image-container {
@@ -229,20 +341,30 @@
   }
   
   .carousel-caption .caption-content {
-    max-width: 90% !important;
-    padding: 10px !important;
+    padding: 15px !important;
   }
   
   .carousel-caption h3 {
-    font-size: 1.2rem !important;
+    font-size: 1.1rem !important;
   }
   
-  .carousel-caption p {
+  .carousel-caption p:not(.price) {
     display: none !important;
   }
   
+  .carousel-caption .price {
+    font-size: 0.85rem !important;
+    margin-bottom: 8px !important;
+  }
+  
   .carousel-caption .btn {
-    padding: 3px 8px !important;
+    padding: 5px 12px !important;
     font-size: 0.8rem !important;
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
   }
 } 

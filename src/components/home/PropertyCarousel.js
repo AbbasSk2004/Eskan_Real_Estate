@@ -131,18 +131,18 @@ const PropertyCarousel = () => {
 
   return (
     <div className="carousel-section">
-      <div className="carousel-title-wrapper mb-5">
+      <div className="carousel-title-wrapper mb-4 mb-md-5">
         <div className="carousel-title-container">
           <div className="carousel-line" />
           <h2 className="carousel-title">
             {user ? 'Recommended For You' : 'Personalized Recommendations'}
             {recommendationSource === 'ml' && (
-              <small className="ms-2 text-muted">(AI-powered)</small>
+              <small className="ms-2 text-muted d-none d-md-inline">(AI-powered)</small>
             )}
           </h2>
           <div className="carousel-line" />
         </div>
-        <p className="carousel-subtitle">
+        <p className="carousel-subtitle px-2">
           {user 
             ? 'Properties selected based on your preferences and browsing history'
             : 'Based on your recent searches and views'}

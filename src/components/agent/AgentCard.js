@@ -35,13 +35,13 @@ const AgentCard = ({ agent, variant = 'default' }) => {
   // Style for image based on variant
   const imageStyle = variant === 'list' 
     ? { height: '200px', objectFit: 'cover', width: '100%' }
-    : { height: '250px', objectFit: 'cover' };
+    : { height: '250px', objectFit: 'cover', objectPosition: 'center top' };
 
   return (
     <div className={cardClass}>
       <div className="position-relative">
         <img 
-          className="img-fluid agent-image" 
+          className="img-fluid agent-image w-100" 
           src={displayImage} 
           alt={fullName}
           style={imageStyle}
@@ -69,11 +69,11 @@ const AgentCard = ({ agent, variant = 'default' }) => {
           )}
         </div>
       </div>
-      <div className="text-center p-4 mt-3 agent-info">
+      <div className="text-center p-3 p-md-4 mt-3 agent-info">
         <h5 className="fw-bold mb-0">{fullName}</h5>
         <div className="text-primary mb-2">{agent.specialty || 'Real Estate Agent'}</div>
         <div className="agent-experience">
-          <span className="badge bg-light text-dark border border-primary px-3 py-2">
+          <span className="badge bg-light text-dark border border-primary px-2 px-md-3 py-1 py-md-2">
             <i className="far fa-clock text-primary me-1"></i>
             {experienceLabel(agent.experience) || '0'} Years Experience
           </span>

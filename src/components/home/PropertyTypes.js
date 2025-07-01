@@ -13,7 +13,7 @@ const PropertyTypes = () => {
     <div className="container-xxl py-5">
       <div className="container">
         {/* Title with full-width lines */}
-        <div className="property-types-title-wrapper mb-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div className="property-types-title-wrapper mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s">
           <div className="property-types-title-container">
             <div className="property-line" />
             <h1 className="section-title">Property Types</h1>
@@ -23,11 +23,11 @@ const PropertyTypes = () => {
         </div>
 
         {/* Property types grid */}
-        <div className="row g-4">
+        <div className="row g-3 g-md-4">
           {PROPERTY_TYPES.map((type, index) => (
             <div
               key={type.value}
-              className="col-lg-3 col-sm-6 wow fadeInUp"
+              className="col-6 col-md-4 col-lg-3 wow fadeInUp"
               data-wow-delay={`${0.1 + index * 0.1}s`}
               onClick={() => handlePropertyTypeClick(type)}
               style={{ cursor: 'pointer' }}
@@ -166,7 +166,31 @@ const PropertyTypes = () => {
           transform: translateY(-2px);
         }
 
-        @media (max-width: 768px) {
+        /* Large screens */
+        @media (max-width: 1200px) {
+          .section-title {
+            font-size: 2.2rem !important;
+          }
+          
+          .property-line {
+            max-width: 150px;
+          }
+        }
+
+        /* Medium screens */
+        @media (max-width: 992px) {
+          .section-title {
+            font-size: 1.8rem !important;
+          }
+          
+          .property-line {
+            max-width: 120px;
+          }
+          
+          .property-subtitle {
+            font-size: 0.95rem;
+          }
+          
           .property-type-card {
             padding: 2rem 1rem;
             min-height: 160px;
@@ -175,7 +199,7 @@ const PropertyTypes = () => {
           .icon-container {
             width: 70px;
             height: 70px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
           }
 
           .property-icon {
@@ -187,16 +211,34 @@ const PropertyTypes = () => {
           }
         }
 
-        @media (max-width: 576px) {
+        /* Small screens */
+        @media (max-width: 768px) {
+          .property-types-title-container {
+            gap: 15px;
+          }
+          
+          .section-title {
+            font-size: 1.5rem !important;
+          }
+          
+          .property-line {
+            max-width: 80px;
+          }
+          
+          .property-subtitle {
+            font-size: 0.9rem;
+            padding: 0 15px;
+          }
+          
           .property-type-card {
-            padding: 1.5rem 0.75rem;
-            min-height: 140px;
+            padding: 1.5rem 1rem;
+            min-height: 150px;
           }
 
           .icon-container {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 0.75rem;
+            width: 65px;
+            height: 65px;
+            margin-bottom: 1rem;
           }
 
           .property-icon {
@@ -205,6 +247,45 @@ const PropertyTypes = () => {
 
           .property-label {
             font-size: 0.95rem;
+          }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 576px) {
+          .property-types-title-container {
+            gap: 10px;
+          }
+          
+          .section-title {
+            font-size: 1.3rem !important;
+          }
+          
+          .property-line {
+            max-width: 60px;
+          }
+          
+          .property-subtitle {
+            font-size: 0.85rem;
+          }
+          
+          .property-type-card {
+            padding: 1.2rem 0.75rem;
+            min-height: 130px;
+            border-radius: 12px;
+          }
+
+          .icon-container {
+            width: 55px;
+            height: 55px;
+            margin-bottom: 0.75rem;
+          }
+
+          .property-icon {
+            font-size: 1.6rem;
+          }
+
+          .property-label {
+            font-size: 0.85rem;
           }
         }
 

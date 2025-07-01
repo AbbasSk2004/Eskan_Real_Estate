@@ -22,24 +22,24 @@ const Hero = () => {
   return (
     <div className="container-fluid header bg-white p-0">
       <div className="row g-0 align-items-center flex-column-reverse flex-md-row">
-        <div className="col-md-6 p-5 mt-lg-5">
-          <h1 className="display-5 animated fadeIn mb-4">
+        <div className="col-md-6 p-4 p-md-5 mt-3 mt-lg-5">
+          <h1 className="display-5 animated fadeIn mb-3 mb-md-4" style={{ fontSize: 'calc(1.5rem + 2vw)' }}>
             Find Your <span className="text-primary">Dream Property</span> Today
           </h1>
-          <p className="animated fadeIn mb-4 pb-2">
+          <p className="animated fadeIn mb-3 mb-md-4 pb-2">
             Explore a curated selection of homes, apartments, and investment properties. Let us help you find the perfect place to call home.
           </p>
-          <Link to="/properties" className="btn btn-primary py-3 px-5 me-3 animated fadeIn">
+          <Link to="/properties" className="btn btn-primary py-2 py-md-3 px-4 px-md-5 me-3 animated fadeIn">
             Get Started
           </Link>
         </div>
         <div className="col-md-6 animated fadeIn">
           <Slider {...settings}>
             <div className="slider-item">
-              <img className="img-fluid" src={process.env.PUBLIC_URL + '/img/carousel-1.jpg'} alt="Property Carousel" />
+              <img className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-1.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
             </div>
             <div className="slider-item">
-              <img className="img-fluid" src={process.env.PUBLIC_URL + '/img/carousel-2.jpg'} alt="Property Carousel" />
+              <img className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-2.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
             </div>
           </Slider>
         </div>

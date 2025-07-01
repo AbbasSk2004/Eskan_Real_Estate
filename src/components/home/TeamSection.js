@@ -77,20 +77,25 @@ const TeamSection = () => {
   return (
     <section className="container-xxl py-5">
       <div className="container">
-        <div className="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '600px' }}>
-          <h1 className="mb-3">Our Expert Agents</h1>
+        <div className="text-center mx-auto mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '600px' }}>
+          <h1 className="mb-3" style={{ fontSize: 'calc(1.5rem + 1vw)' }}>Our Expert Agents</h1>
           <p>Meet our team of experienced real estate professionals</p>
         </div>
-        <div className="row g-4">
+        <div className="row g-3 g-md-4">
           {agents.map((agent, index) => (
-            <div key={agent.id} className="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay={`${0.1 + index * 0.2}s`}>
+            <div key={agent.id} className="col-12 col-sm-6 col-lg-3 wow fadeInUp" data-wow-delay={`${0.1 + index * 0.2}s`}>
               <div className="team-item rounded overflow-hidden">
                 <div className="position-relative">
                   <img 
-                    className="img-fluid" 
+                    className="img-fluid w-100" 
                     src={agent.profile_photo || '/img/default-agent.jpg'} 
                     alt={agent.full_name}
-                    style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+                    style={{ 
+                      height: '250px',
+                      maxHeight: '300px', 
+                      objectFit: 'cover',
+                      objectPosition: 'center top'
+                    }}
                   />
                   <div className="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
                     {agent.social_links?.facebook && (
@@ -115,11 +120,11 @@ const TeamSection = () => {
                     )}
                   </div>
                 </div>
-                <div className="text-center p-4 mt-3">
+                <div className="text-center p-3 p-md-4 mt-3">
                   <h5 className="fw-bold mb-0">{agent.full_name}</h5>
                   <small>{agent.specialization || 'Real Estate Agent'}</small>
-                  <p className="text-muted mt-2">{experienceLabel(agent.experience)}</p>
-                  <Link to={`/agent/${agent.id}`} className="btn btn-primary px-4">View Profile</Link>
+                  <p className="text-muted mt-2 mb-3">{experienceLabel(agent.experience)}</p>
+                  <Link to={`/agent/${agent.id}`} className="btn btn-primary px-3 px-md-4">View Profile</Link>
                 </div>
               </div>
             </div>

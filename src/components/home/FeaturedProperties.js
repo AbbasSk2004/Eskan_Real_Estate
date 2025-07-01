@@ -84,22 +84,22 @@ const FeaturedProperties = () => {
   return (
     <section ref={sectionRef} className="container-xxl py-5">
       <div className="container">
-      <div className="featured-title-wrapper mb-5 wow fadeInUp" data-wow-delay="0.1s">
-  <div className="featured-title-container">
-    <div className="featured-line" />
-    <h2 className="featured-title">Featured Properties</h2>
-    <div className="featured-line" />
-  </div>
-  <div className="featured-subtitle-wrapper">
-    <p className="featured-subtitle">Discover our handpicked selection of premium properties</p>
-    <Link to="/properties/type/featured" className="view-all-link">View All <i className="fa fa-arrow-right"></i></Link>
-  </div>
-</div>
+        <div className="featured-title-wrapper mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s">
+          <div className="featured-title-container">
+            <div className="featured-line" />
+            <h2 className="featured-title">Featured Properties</h2>
+            <div className="featured-line" />
+          </div>
+          <div className="featured-subtitle-wrapper">
+            <p className="featured-subtitle">Discover our handpicked selection of premium properties</p>
+            <Link to="/properties/type/featured" className="view-all-link">View All <i className="fa fa-arrow-right"></i></Link>
+          </div>
+        </div>
 
         {rows.map((row, rowIndex) => (
-          <div key={rowIndex} className="row g-4 mb-4">
+          <div key={rowIndex} className="row g-3 g-md-4 mb-3 mb-md-4">
             {row.map(property => (
-              <div key={property.id} className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div key={property.id} className="col-12 col-sm-6 col-lg-4 wow fadeInUp" data-wow-delay="0.1s">
                 <PropertyCard property={property} />
               </div>
             ))}

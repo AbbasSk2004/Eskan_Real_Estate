@@ -58,6 +58,15 @@ const TestimonialsCarousel = () => {
           slidesToScroll: 1,
           infinite: testimonials.length > 1
         }
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          infinite: testimonials.length > 1
+        }
       }
     ]
   };
@@ -65,16 +74,16 @@ const TestimonialsCarousel = () => {
   return (
     <div className="container-xxl py-5">
       <div className="container">
-        <div className="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '600px' }}>
-          <h1 className="mb-3">Our Clients Say!</h1>
-          <p>Read what our satisfied clients have to say about their experience with us.</p>
+        <div className="text-center mx-auto mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '600px' }}>
+          <h1 className="mb-3" style={{ fontSize: 'calc(1.5rem + 1vw)' }}>Our Clients Say!</h1>
+          <p className="px-3">Read what our satisfied clients have to say about their experience with us.</p>
         </div>
         <div className="testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
           <Slider {...settings}>
             {testimonials.map((testimonial) => (
               <div key={testimonial.id} className="testimonial-item">
                 <div className="bg-light rounded p-4">
-                  <div className="d-flex align-items-center mb-4">
+                  <div className="d-flex align-items-center mb-3 mb-md-4">
                     <img
                       src={testimonial.profiles.profile_photo || '/img/default-profile.jpg'}
                       alt={`${testimonial.profiles.firstname} ${testimonial.profiles.lastname}`}
@@ -84,7 +93,7 @@ const TestimonialsCarousel = () => {
                         e.target.src = '/img/default-profile.jpg';
                       }}
                     />
-                    <div className="ms-4">
+                    <div className="ms-3 ms-md-4">
                       <h5 className="mb-1">{`${testimonial.profiles.firstname} ${testimonial.profiles.lastname}`}</h5>
                       <div className="rating">
                         {[...Array(5)].map((_, index) => (
