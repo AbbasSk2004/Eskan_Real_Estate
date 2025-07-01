@@ -92,6 +92,20 @@
   }
 }
 
+@media (max-width: 576px) {
+  .register-form-container {
+    padding: 1rem;
+  }
+
+  .registration-form {
+    gap: 1rem;
+  }
+
+  .social-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

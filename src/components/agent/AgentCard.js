@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { experienceLabel } from '../../utils/agentConstants';
 import { getImageUrl } from '../../utils/imageUtils';
 import './AgentCard.css'; // We'll create this next
 
 const AgentCard = ({ agent, variant = 'default' }) => {
   const fullName = `${agent.profiles?.firstname || ''} ${agent.profiles?.lastname || ''}`.trim();
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
   
   // Process agent's image with proper handling for both string and object formats
   let displayImage = '/img/default-agent.jpg';
@@ -35,31 +33,19 @@ const AgentCard = ({ agent, variant = 'default' }) => {
   const cardClass = `team-item agent-card agent-card-${variant} rounded overflow-hidden`;
 
   // Style for image based on variant
-  const imageContainerClass = `agent-image-container ${imageLoaded ? 'loaded' : 'loading'} ${imageError ? 'error' : ''}`;
+  const imageStyle = variant === 'list' 
+    ? { height: '200px', objectFit: 'cover', width: '100%' }
+    : { height: '250px', objectFit: 'cover' };
 
   return (
     <div className={cardClass}>
       <div className="position-relative">
-        <div className={imageContainerClass}>
-          {!imageLoaded && !imageError && (
-            <div className="agent-image-placeholder">
-              <div className="spinner-border spinner-border-sm text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          )}
-          <img 
-            className="img-fluid agent-image w-100"
-            src={imageError ? '/img/default-agent.jpg' : displayImage}
-            alt={fullName}
-            style={{ opacity: imageLoaded && !imageError ? 1 : 0 }}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              setImageError(true);
-              setImageLoaded(true);
-            }}
-          />
-        </div>
+        <img 
+          className="img-fluid agent-image" 
+          src={displayImage} 
+          alt={fullName}
+          style={imageStyle}
+        />
         <div className="position-absolute start-50 top-100 translate-middle d-flex align-items-center agent-social">
           {agent.facebook_url && (
             <a className="btn btn-square mx-1" href={agent.facebook_url} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -83,11 +69,11 @@ const AgentCard = ({ agent, variant = 'default' }) => {
           )}
         </div>
       </div>
-      <div className="text-center p-3 p-md-4 mt-3 agent-info">
+      <div className="text-center p-4 mt-3 agent-info">
         <h5 className="fw-bold mb-0">{fullName}</h5>
         <div className="text-primary mb-2">{agent.specialty || 'Real Estate Agent'}</div>
         <div className="agent-experience">
-          <span className="badge bg-light text-dark border border-primary px-2 px-md-3 py-1 py-md-2">
+          <span className="badge bg-light text-dark border border-primary px-3 py-2">
             <i className="far fa-clock text-primary me-1"></i>
             {experienceLabel(agent.experience) || '0'} Years Experience
           </span>

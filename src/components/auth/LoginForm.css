@@ -76,3 +76,13 @@ a.text-primary:hover {
   border-color: #fecdcd;
   color: #dc3545;
 }
+
+@media (max-width: 576px) {
+  .login-form-container {
+    padding: 1.25rem !important;
+  }
+
+  .login-form-container > .bg-white {
+    padding: 1rem !important;
+  }
+}

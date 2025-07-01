@@ -65,8 +65,8 @@ const ForgotPassword = () => {
       <div className="container-fluid py-5">
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-lg-6 col-md-8">
-              <div className="bg-light rounded p-5 text-center">
+            <div className="col-lg-6 col-md-10 col-sm-11">
+              <div className="bg-light rounded p-4 p-md-5 text-center">
                 <div className="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
                      style={{ width: '80px', height: '80px' }}>
                   <i className="fa fa-check fa-2x text-white"></i>
@@ -102,8 +102,8 @@ const ForgotPassword = () => {
     <div className="container-fluid py-5">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-lg-6 col-md-8">
-            <div className="bg-light rounded p-5">
+          <div className="col-lg-6 col-md-10 col-sm-11">
+            <div className="bg-light rounded p-4 p-md-5">
               <div className="text-center mb-4">
                 <div className="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                      style={{ width: '80px', height: '80px' }}>

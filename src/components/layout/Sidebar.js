@@ -62,6 +62,7 @@ const Sidebar = ({
     return [
       { label: 'Home', path: '/', icon: 'fa-home' },
       { label: 'Property List', path: '/properties', icon: 'fa-building' },
+      { label: 'Agent', path: '/property-agent', icon: 'fa-user-tie' },
       { label: 'About', path: '/about', icon: 'fa-info-circle' },
       { label: 'Contact', path: '/contact', icon: 'fa-envelope' }
     ];

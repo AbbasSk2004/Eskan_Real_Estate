@@ -81,7 +81,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="bg-light rounded p-4 shadow-sm">
+    <div className="login-form-container bg-light rounded p-4 shadow-sm">
       <div className="bg-white rounded p-4" style={{ border: '1px dashed rgba(0, 185, 142, .3)' }}>
         <div className="text-center mb-4">
           <h2 className="mb-2 text-primary">Welcome Back!</h2>
