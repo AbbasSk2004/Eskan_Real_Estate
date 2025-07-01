@@ -27,6 +27,43 @@ const alternativeVars = {
 const NODE_ENV = process.env.NODE_ENV || 'development';
 console.log(chalk.blue(`🔍 Verifying environment variables for ${NODE_ENV} environment...`));
 
+// First, check for variables in process.env (Netlify environment)
+const envVars = {};
+
+// Check if any variables are already set in the environment
+console.log(chalk.blue('Checking for environment variables provided by CI/CD platform...'));
+requiredEnvVars[NODE_ENV].forEach(key => {
+  if (process.env[key]) {
+    envVars[key] = process.env[key];
+    console.log(chalk.green(`✅ Found required variable in environment: ${key}`));
+  }
+});
+
+Object.keys(alternativeVars).forEach(key => {
+  alternativeVars[key].forEach(altKey => {
+    if (process.env[altKey]) {
+      envVars[altKey] = process.env[altKey];
+      console.log(chalk.green(`✅ Found alternative variable in environment: ${altKey}`));
+    }
+  });
+});
+
+// If we have all required variables from the environment, skip .env file checks
+const allVarsFromEnvironment = requiredEnvVars[NODE_ENV].every(key => {
+  if (envVars[key]) return true;
+  
+  // Check alternatives
+  const alternatives = alternativeVars[key] || [];
+  return alternatives.some(alt => envVars[alt]);
+});
+
+if (allVarsFromEnvironment) {
+  console.log(chalk.green('✅ All required environment variables found in environment!'));
+  console.log(chalk.green('✅ Environment setup looks good!'));
+  process.exit(0);
+}
+
+// Continue with .env file check if not all variables are in environment
 const envPath = path.join(process.cwd(), '.env');
 const envExamplePath = path.join(process.cwd(), '.env.example');
 
@@ -61,7 +98,43 @@ REACT_APP_FIREBASE_APP_ID=your_firebase_app_id_here
     fs.writeFileSync(envPath, envContent);
     console.log(chalk.green('✅ Created new .env file template'));
     console.log(chalk.yellow('⚠️ Please fill in the required values in the .env file'));
-    process.exit(1);
+    
+    // Check if we're in CI environment (like Netlify)
+    if (process.env.CI === 'true') {
+      console.log(chalk.yellow('Detected CI environment. Checking for environment variables...'));
+      
+      // Check if required variables are set in the environment
+      const missingVars = requiredEnvVars[NODE_ENV].filter(key => {
+        // Check direct match
+        if (process.env[key]) {
+          console.log(chalk.green(`✅ Found ${key} in environment variables`));
+          envVars[key] = process.env[key];
+          return false;
+        }
+        
+        // Check alternatives
+        const alternatives = alternativeVars[key] || [];
+        const foundAlt = alternatives.find(alt => process.env[alt]);
+        if (foundAlt) {
+          console.log(chalk.green(`✅ Found alternative ${foundAlt} for ${key} in environment variables`));
+          envVars[foundAlt] = process.env[foundAlt];
+          return false;
+        }
+        
+        console.log(chalk.red(`❌ Missing ${key} in environment variables`));
+        return true;
+      });
+      
+      if (missingVars.length === 0) {
+        console.log(chalk.green('✅ All required environment variables found in CI environment!'));
+        process.exit(0);
+      } else {
+        console.log(chalk.red(`❌ Missing required environment variables in CI: ${missingVars.join(', ')}`));
+        process.exit(1);
+      }
+    } else {
+      process.exit(1);
+    }
   }
 }
 
@@ -73,7 +146,6 @@ console.log(chalk.gray(envContent.substring(0, 100) + '...'));
 
 // Handle different line endings (CRLF on Windows, LF on Unix)
 const envLines = envContent.replace(/\r\n/g, '\n').split('\n');
-const envVars = {};
 
 // Parse .env file - improved parsing
 envLines.forEach((line, index) => {
@@ -92,8 +164,11 @@ envLines.forEach((line, index) => {
       value = value.substring(1, value.length - 1);
     }
     
-    envVars[key] = value;
-    console.log(chalk.gray(`Line ${index+1}: Found variable ${key}`));
+    // Only set if not already set from environment
+    if (!envVars[key]) {
+      envVars[key] = value;
+      console.log(chalk.gray(`Line ${index+1}: Found variable ${key}`));
+    }
   } else {
     console.log(chalk.yellow(`Line ${index+1}: Could not parse line: ${line}`));
   }
