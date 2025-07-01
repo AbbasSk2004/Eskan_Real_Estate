@@ -21,6 +21,13 @@ const PropertyCarousel = () => {
     }).format(price);
   };
 
+  // Function to split title into words and wrap each in a span
+  const formatTitle = (title) => {
+    return title.split(' ').map((word, index) => (
+      <span key={index}>{word}</span>
+    ));
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -135,7 +142,10 @@ const PropertyCarousel = () => {
         <div className="carousel-title-container">
           <div className="carousel-line" />
           <h2 className="carousel-title">
-            {user ? 'Recommended For You' : 'Personalized Recommendations'}
+            {user 
+              ? formatTitle('Recommended For You')
+              : formatTitle('Personalized Recommendations')
+            }
             {recommendationSource === 'ml' && (
               <small className="ms-2 text-muted d-none d-md-inline">(AI-powered)</small>
             )}

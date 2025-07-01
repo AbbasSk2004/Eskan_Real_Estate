@@ -11,6 +11,13 @@ const RETRY_DELAY = 1000; // 1 second
 const PROPERTIES_PER_ROW = 3;
 const MAX_ROWS = 3;
 
+// Function to split title into words and wrap each in a span
+const formatTitle = (title) => {
+  return title.split(' ').map((word, index) => (
+    <span key={index}>{word}</span>
+  ));
+};
+
 const FeaturedProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +94,7 @@ const FeaturedProperties = () => {
         <div className="featured-title-wrapper mb-4 mb-md-5 wow fadeInUp" data-wow-delay="0.1s">
           <div className="featured-title-container">
             <div className="featured-line" />
-            <h2 className="featured-title">Featured Properties</h2>
+            <h2 className="featured-title">{formatTitle('Featured Properties')}</h2>
             <div className="featured-line" />
           </div>
           <div className="featured-subtitle-wrapper">

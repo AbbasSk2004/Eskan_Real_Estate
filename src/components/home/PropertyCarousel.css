@@ -255,6 +255,10 @@
   
   .carousel-title {
     font-size: 1.5rem !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   
   .carousel-line {
@@ -326,6 +330,12 @@
   
   .carousel-title {
     font-size: 1.3rem !important;
+    text-align: center !important;
+  }
+  
+  .carousel-title span {
+    display: block !important;
+    margin-bottom: 5px !important;
   }
   
   .carousel-line {
