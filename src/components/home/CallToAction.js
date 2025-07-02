@@ -9,7 +9,7 @@ const CallToAction = () => {
           <div className="bg-white rounded p-3 p-sm-4" style={{ border: '1px dashed rgba(0, 185, 142, .3)' }}>
             <div className="row g-4 g-lg-5 align-items-center">
               <div className="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                <img className="img-fluid rounded w-100" src="/img/call-to-action.jpg" alt="" />
+                <img loading="lazy" className="img-fluid rounded w-100" src="/img/call-to-action.jpg" alt="Real estate agent consultation" />
               </div>
               <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                 <div className="mb-4">

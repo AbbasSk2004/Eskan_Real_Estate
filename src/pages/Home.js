@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import Hero from '../components/home/Hero';
 import PropertyTypes from '../components/home/PropertyTypes';
 import FeaturedProperties from '../components/home/FeaturedProperties';
@@ -8,14 +9,17 @@ import BlogSection from '../components/home/BlogSection';
 
 const Home = () => {
   return (
-    <div className="home-page">
-      <Hero />
-      <PropertyCarousel />
-      <PropertyTypes />
-      <FeaturedProperties />
-      <BlogSection />
-      <CallToAction />
-    </div>
+    <>
+      <SEO title="Home" description="Find your dream property with Eskan Real Estate. Browse curated homes, apartments, and investment opportunities in your area." />
+      <div className="home-page">
+        <Hero />
+        <PropertyCarousel />
+        <PropertyTypes />
+        <FeaturedProperties />
+        <BlogSection />
+        <CallToAction />
+      </div>
+    </>
   );
 };
 

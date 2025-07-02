@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ApiProvider } from './context/ApiContext';
 import { DatabaseProvider } from './context/DatabaseContext';
@@ -18,6 +18,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/auth/PrivateRoute';
 import authStorage from './utils/authStorage';
 import websocketService from './services/websocket';
+import { HelmetProvider } from 'react-helmet-async';
+import { initAnalytics, sendPageview } from './utils/analytics';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -62,6 +64,7 @@ const AppContent = () => {
   const [hasError, setHasError] = useState(false);
   const { user } = useAuth();
   const { showChat, setShowChat } = useGlobalChat();
+  const location = useLocation();
 
   // Ensure page scrolls to top on app initialization and refresh
   useEffect(() => {
@@ -96,6 +99,8 @@ const AppContent = () => {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        // Initialize Google Analytics once
+        initAnalytics();
         // Only check environment setup if we're not authenticated
         if (!user && !authStorage.hasValidToken()) {
           const isSetupValid = await checkEnvironmentSetup();
@@ -118,6 +123,11 @@ const AppContent = () => {
 
     initializeApp();
   }, [user]);
+
+  // Track page views on route change
+  useEffect(() => {
+    sendPageview(location.pathname + location.search);
+  }, [location]);
 
   // Don't show loading spinner if we have a valid user
   if (isInitializing && !user) {
@@ -193,28 +203,30 @@ const AppContent = () => {
 function App() {
   return (
     <ErrorBoundary>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true
-        }}
-      >
-        <AuthProvider>
-          <ThemeProvider>
-            <ApiProvider>
-              <NotificationProvider>
-                <DatabaseProvider>
-                  <ChatProvider>
-                    <GoogleMapsProvider>
-                      <AppContent />
-                    </GoogleMapsProvider>
-                  </ChatProvider>
-                </DatabaseProvider>
-              </NotificationProvider>
-            </ApiProvider>
-          </ThemeProvider>
-        </AuthProvider>
-      </Router>
+      <HelmetProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          <AuthProvider>
+            <ThemeProvider>
+              <ApiProvider>
+                <NotificationProvider>
+                  <DatabaseProvider>
+                    <ChatProvider>
+                      <GoogleMapsProvider>
+                        <AppContent />
+                      </GoogleMapsProvider>
+                    </ChatProvider>
+                  </DatabaseProvider>
+                </NotificationProvider>
+              </ApiProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </Router>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

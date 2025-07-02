@@ -524,3 +524,9 @@ body {
     margin-bottom: 1rem;
   }
 }
+
+/* Accessibility: Ensure focus outlines are visible */
+:focus-visible {
+  outline: 2px solid #1e88e5;
+  outline-offset: 2px;
+}
