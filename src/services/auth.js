@@ -30,7 +30,8 @@ class AuthService {
       // Use sendBeacon for inactive status (often called during unload)
       if (status === 'inactive' && navigator.sendBeacon) {
         const endpoint = `${API_BASE_URL}/auth/update-status`;
-        const blob = new Blob([JSON.stringify({ status })], { type: 'application/json' });
+        const payload = { status, token }; // backend can read the token from the body
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
         navigator.sendBeacon(endpoint, blob);
         return;
       }

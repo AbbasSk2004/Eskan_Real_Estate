@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import NotificationBell from '../notifications/NotificationBell';
+import NotificationCenter from '../notifications/NotificationCenter';
 
 const Sidebar = ({ 
   isOpen = false, 
@@ -12,6 +13,9 @@ const Sidebar = ({
 }) => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+
+  // Local state to control full-screen notification modal (mobile only)
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
 
   // Close sidebar ONLY when the route actually changes (mobile variant)
   // We purposely watch only the pathname so opening the sidebar itself will not immediately close it.
@@ -184,17 +188,22 @@ const Sidebar = ({
             {/* Mobile notifications entry */}
             {variant === 'mobile' && isAuthenticated && (
               <li className="nav-item mb-2">
-                <div
-                  className="nav-link d-flex align-items-center py-2 px-3 text-secondary bg-transparent w-100"
+                <button
+                  type="button"
+                  className="nav-link d-flex align-items-center py-2 px-3 text-secondary bg-transparent border-0 w-100 text-start"
                   style={{
                     borderRadius: '8px',
                     transition: 'all 0.2s ease',
                     cursor: 'pointer'
                   }}
+                  onClick={() => {
+                    setNotificationModalOpen(true);
+                    onClose();
+                  }}
                 >
-                  <NotificationBell />
-                  <span className="ms-3">Notifications</span>
-                </div>
+                  <i className="fa fa-bell me-3"></i>
+                  Notifications
+                </button>
               </li>
             )}
             {navigationItems.map((item, index) => (
@@ -273,6 +282,27 @@ const Sidebar = ({
           )}
         </div>
       </div>
+
+      {/* Mobile full-screen notification modal */}
+      {variant === 'mobile' && notificationModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            zIndex: 1100,
+          }}
+        >
+          <NotificationCenter
+            isOpen={notificationModalOpen}
+            onClose={() => setNotificationModalOpen(false)}
+          />
+        </div>
+      )}
+
     </>
   );
 };
