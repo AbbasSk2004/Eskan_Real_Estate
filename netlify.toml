@@ -11,3 +11,10 @@
   from = "/*"
   to = "/index.html"
   status = 200 
+
+# Ensure the HTML entry point is always fetched fresh so that
+# the browser picks up new hashed bundle names immediately.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache" 
