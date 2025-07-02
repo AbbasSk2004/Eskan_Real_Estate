@@ -51,7 +51,6 @@ import BlogDetail from './pages/BlogDetail';
 import VerifyOTPPage from './pages/VerifyOTP';
 
 // Styles
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 // AppContent component that uses authentication context
@@ -122,7 +121,7 @@ const AppContent = () => {
 
   // Don't show loading spinner if we have a valid user
   if (isInitializing && !user) {
-    return <LoadingSpinner fullScreen text="Initializing application..." />;
+    return <LoadingSpinner fullScreen text="loading..." />;
   }
 
   if (hasError && !user) {

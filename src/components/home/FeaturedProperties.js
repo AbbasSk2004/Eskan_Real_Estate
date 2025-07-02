@@ -5,7 +5,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { useToast } from '../../hooks/useToast';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
-import './Featured.css';
+import '../../assets/css/Featured.css';
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 const PROPERTIES_PER_ROW = 3;

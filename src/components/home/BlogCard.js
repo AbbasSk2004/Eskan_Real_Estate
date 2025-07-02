@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './BlogCard.css';
+import '../../assets/css/BlogCard.css';
 import { formatDate } from '../../utils/formatters';
 
 const BlogCard = ({ blog }) => {

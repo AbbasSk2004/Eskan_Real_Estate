@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getRecommendedProperties } from '../../services/recommendation';
 import { useAuth } from '../../context/AuthContext';
-import './PropertyCarousel.css';
+import '../../assets/css/PropertyCarousel.css';
 
 const PropertyCarousel = () => {
   const [properties, setProperties] = useState([]);

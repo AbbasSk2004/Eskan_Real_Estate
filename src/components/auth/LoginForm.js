@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import api from '../../services/api';
 import authStorage from '../../utils/authStorage';
 import authService from '../../services/auth';
-import './LoginForm.css';
+import '../../assets/css/LoginForm.css';
 
 const LoginForm = () => {
   const navigate = useNavigate();

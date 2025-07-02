@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import authService from '../../services/auth';
-import './RegisterForm.css';
+import '../../assets/css/RegisterForm.css';
 
 const VerifyOTP = () => {
   const navigate = useNavigate();

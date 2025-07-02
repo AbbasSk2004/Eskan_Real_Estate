@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link, useParams } from 'react-router-dom';
 import { endpoints } from '../services/api';
 import BlogCard from '../components/home/BlogCard';
-import '../components/home/BlogSection.css';
+import '../assets/css/BlogSection.css';
 
 const Blogs = () => {
   const { category: categoryParam } = useParams();

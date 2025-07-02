@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import authService from '../../services/auth';
 import { useToast } from '../../hooks/useToast';
-import './RegisterForm.css';
+import '../../assets/css/RegisterForm.css';
 
 const ResetPasswordForm = () => {
   const navigate = useNavigate();

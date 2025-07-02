@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/auth';
 import { useToast } from '../../hooks/useToast';
-import './RegisterForm.css';
+import '../../assets/css/RegisterForm.css';
 
 const RegisterForm = () => {
   const navigate = useNavigate();

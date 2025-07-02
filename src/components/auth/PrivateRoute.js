@@ -9,7 +9,7 @@ const PrivateRoute = () => {
 
   // Show loading spinner while auth is initializing or loading
   if (!initialized || loading) {
-    return <LoadingSpinner fullScreen text="Checking authentication..." />;
+    return <LoadingSpinner fullScreen text="loading..." />;
   }
 
   // Store the current path for redirect after login

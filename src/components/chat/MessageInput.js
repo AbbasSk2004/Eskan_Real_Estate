@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
 import { FiSend } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 
@@ -22,10 +21,10 @@ const MessageInput = ({ onSendMessage, disabled = false }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="message-input-container p-2">
+    <form onSubmit={handleSubmit} className="message-input-container p-2">
       <div className="d-flex align-items-center">
-        <Form.Control
-          as="textarea"
+        <textarea
+          className="form-control py-2 px-3"
           rows={1}
           placeholder="Message..."
           value={message}
@@ -39,13 +38,11 @@ const MessageInput = ({ onSendMessage, disabled = false }) => {
             fontSize: '0.95rem',
             backgroundColor: '#f0f2f5'
           }}
-          className="py-2 px-3"
         />
-        <Button 
+        <button 
           type="submit" 
-          variant="link"
+          className="btn btn-link send-button"
           disabled={!message.trim() || disabled}
-          className="send-button"
           style={{
             marginLeft: '-40px',
             zIndex: 2,
@@ -53,9 +50,9 @@ const MessageInput = ({ onSendMessage, disabled = false }) => {
           }}
         >
           <FiSend size={20} />
-        </Button>
+        </button>
       </div>
-    </Form>
+    </form>
   );
 };
 

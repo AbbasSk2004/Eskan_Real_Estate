@@ -13,6 +13,7 @@ import './assets/css/fonts.css'; // This will be created
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap JS
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 // Custom styles that might override Bootstrap
 import './assets/css/global.css'; // Add global styles
 import './assets/css/scroll.css'; // Add scroll styles

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import RegisterForm from '../components/auth/RegisterForm';
-import '../styles/PageHeader.css';
+import '../assets/css/PageHeader.css';
 
 const Register = () => {
   return (

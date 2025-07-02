@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PROPERTY_TYPES } from '../../utils/propertyTypes';
 import { PROPERTY_TYPE_FIELDS, COMMON_FEATURES, lebanonCities, lebanonVillages } from '../../utils/propertyTypeFields';
 import { PROPERTY_STATUS, BEDROOM_OPTIONS, BATHROOM_OPTIONS } from '../../utils/constants';
-import '../../styles/PropertyFilters.css';
+import '../../assets/css/PropertyFilters.css';
 import { storeUserPreferences } from '../../services/recommendation';
 
 const PropertyFilters = ({ onFilterChange, onReset, initialFilters = {} }) => {

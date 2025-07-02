@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import VerifyOTP from '../components/auth/verfi_otp';
-import '../styles/PageHeader.css';
+import '../assets/css/PageHeader.css';
 
 const VerifyOTPPage = () => {
   return (

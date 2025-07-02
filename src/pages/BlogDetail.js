@@ -4,7 +4,7 @@ import { endpoints } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { formatDate } from '../utils/formatters';
-import './BlogDetail.css';
+import '../assets/css/BlogDetail.css';
 
 const BlogDetail = () => {
   const { slug } = useParams();

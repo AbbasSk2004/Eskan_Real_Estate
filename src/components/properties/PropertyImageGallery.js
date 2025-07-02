@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// Removed redundant Bootstrap import
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import './PropertyGalleryStyles.css';
 

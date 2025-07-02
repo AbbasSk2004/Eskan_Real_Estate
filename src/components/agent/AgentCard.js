@@ -1,7 +1,7 @@
 import React from 'react';
 import { experienceLabel } from '../../utils/agentConstants';
 import { getImageUrl } from '../../utils/imageUtils';
-import './AgentCard.css'; // We'll create this next
+import '../../assets/css/AgentCard.css'; 
 
 const AgentCard = ({ agent, variant = 'default' }) => {
   const fullName = `${agent.profiles?.firstname || ''} ${agent.profiles?.lastname || ''}`.trim();
