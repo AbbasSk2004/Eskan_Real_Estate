@@ -5,7 +5,7 @@ import { endpoints } from '../../services/api';
 import NotificationList from './NotificationList';
 import './NotificationCenter.css';
 
-const NotificationCenter = ({ isOpen, onClose, onNotificationUpdate }) => {
+const NotificationCenter = ({ isOpen, onClose, onNotificationUpdate, fullscreen = false }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -96,8 +96,10 @@ const NotificationCenter = ({ isOpen, onClose, onNotificationUpdate }) => {
     return null;
   }
 
+  const containerClass = `notification-center ${fullscreen ? 'notification-center--fullscreen' : ''}`.trim();
+
   return (
-    <div className="notification-center">
+    <div className={containerClass}>
       <div className="d-flex flex-column">
         {/* Header */}
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">

@@ -147,4 +147,22 @@
   .notification-center .content {
     max-height: calc(100vh - 120px) !important;
   }
+}
+
+/* Fullscreen variant when used inside Sidebar mobile modal (works on any viewport width) */
+.notification-center--fullscreen {
+  position: fixed !important;
+  top: 60px !important; /* leave space for navbar */
+  right: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: calc(100vh - 60px) !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  z-index: 1101; /* above the dark overlay */
+}
+
+.notification-center--fullscreen .notification-center-content {
+  max-height: calc(100vh - 120px) !important;
 } 

@@ -187,12 +187,13 @@ export const NotificationProvider = ({ children }) => {
         dispatch({ type: NOTIFICATION_ACTIONS.SET_LOADING, payload: true });
         hasAttemptedFetch.current = true;
 
-        const { data, error } = await notificationService.getAll(abortControllerRef.current.signal);
+        const { data, error } = await notificationService.getAllNotifications();
 
         if (error) throw error;
 
         if (isMountedRef.current) {
-          dispatch({ type: NOTIFICATION_ACTIONS.SET_NOTIFICATIONS, payload: data || [] });
+          const list = Array.isArray(data?.notifications) ? data.notifications : [];
+          dispatch({ type: NOTIFICATION_ACTIONS.SET_NOTIFICATIONS, payload: list });
         }
       } catch (error) {
         // Only dispatch error if it's not an abort error and component is mounted
@@ -217,8 +218,9 @@ export const NotificationProvider = ({ children }) => {
         const { data, error } = await notificationService.getUnreadCount();
         if (error) throw error;
         
+        const unread = typeof data === 'number' ? data : data?.count || 0;
         if (isMountedRef.current) {
-          dispatch({ type: NOTIFICATION_ACTIONS.SET_UNREAD_COUNT, payload: data?.count || 0 });
+          dispatch({ type: NOTIFICATION_ACTIONS.SET_UNREAD_COUNT, payload: unread });
         }
       } catch (error) {
         console.error('Error fetching unread count:', error);

@@ -5,7 +5,8 @@ const NotificationItem = ({
   onMarkRead, 
   onDelete, 
   showActions = true,
-  compact = false 
+  compact = false,
+  allowClick = true
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -105,7 +106,8 @@ const NotificationItem = ({
     }
   };
 
-  const hasAction = getNotificationActionUrl(notification) !== null;
+  // Determine if this notification should navigate / show indicator
+  const hasAction = allowClick && getNotificationActionUrl(notification) !== null;
 
   return (
     <div
@@ -241,7 +243,7 @@ const NotificationItem = ({
       )}
 
       {/* Action indicator */}
-      {hasAction && (
+      {allowClick && hasAction && (
         <div className="mt-2">
           <small className="text-primary">
             <i className="fa fa-external-link-alt me-1"></i>

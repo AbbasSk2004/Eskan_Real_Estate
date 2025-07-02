@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
+import { useNotifications } from '../../hooks/useNotifications';
 import NotificationBell from '../notifications/NotificationBell';
-import NotificationCenter from '../notifications/NotificationCenter';
+import NotificationItem from '../notifications/NotificationItem';
 
 const Sidebar = ({ 
   isOpen = false, 
@@ -13,8 +15,20 @@ const Sidebar = ({
 }) => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const { startFetching, unreadCount } = useNotification();
 
-  // Local state to control full-screen notification modal (mobile only)
+  // Use realtime notifications hook (WebSocket + polling)
+  const {
+    notifications,
+    loading: notifLoading,
+    error: notifError,
+    fetchNotifications: manualFetch,
+    markAsRead,
+    deleteNotification,
+    clearAllNotifications
+  } = useNotifications({ pollInterval: 10000 });
+
+  // Local state to control notification panel visibility
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
 
   // Close sidebar ONLY when the route actually changes (mobile variant)
@@ -29,7 +43,12 @@ const Sidebar = ({
   // Close sidebar when clicking outside (for mobile)
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isOpen && variant === 'mobile' && !event.target.closest('.sidebar')) {
+      if (
+        isOpen &&
+        variant === 'mobile' &&
+        !notificationModalOpen &&
+        !event.target.closest('.sidebar')
+      ) {
         onClose();
       }
     };
@@ -41,7 +60,29 @@ const Sidebar = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, variant, onClose]);
+  }, [isOpen, variant, onClose, notificationModalOpen]);
+
+  // Close notification panel when clicking outside (for mobile)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationModalOpen &&
+        variant === 'mobile' &&
+        !event.target.closest('.notification-panel') &&
+        !event.target.closest('.notification-btn')
+      ) {
+        setNotificationModalOpen(false);
+      }
+    };
+
+    if (notificationModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [notificationModalOpen, variant]);
 
   const handleSignOut = () => {
     logout();
@@ -81,6 +122,18 @@ const Sidebar = ({
     ${isOpen ? 'sidebar-open' : 'sidebar-closed'}
     ${className}
   `.trim();
+
+  // Handle clear all notifications
+  const handleClearAll = async () => {
+    if (!window.confirm('Are you sure you want to clear all notifications? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await clearAllNotifications();
+    } catch (err) {
+      console.error('Failed to clear notifications:', err);
+    }
+  };
 
   return (
     <>
@@ -190,7 +243,7 @@ const Sidebar = ({
               <li className="nav-item mb-2">
                 <button
                   type="button"
-                  className="nav-link d-flex align-items-center py-2 px-3 text-secondary bg-transparent border-0 w-100 text-start"
+                  className="nav-link d-flex align-items-center py-2 px-3 text-secondary bg-transparent border-0 w-100 text-start notification-btn"
                   style={{
                     borderRadius: '8px',
                     transition: 'all 0.2s ease',
@@ -198,11 +251,17 @@ const Sidebar = ({
                   }}
                   onClick={() => {
                     setNotificationModalOpen(true);
-                    onClose();
+                    manualFetch();
+                    onClose(); // Close the sidebar when opening notifications
                   }}
                 >
                   <i className="fa fa-bell me-3"></i>
                   Notifications
+                  {unreadCount > 0 && (
+                    <span className="badge bg-danger ms-2 rounded-pill">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
               </li>
             )}
@@ -283,26 +342,97 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Mobile full-screen notification modal */}
+      {/* Notification Overlay */}
       {variant === 'mobile' && notificationModalOpen && (
-        <div
+        <div 
+          className="notification-overlay"
+          onClick={() => setNotificationModalOpen(false)}
           style={{
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            zIndex: 1100,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1060
           }}
-        >
-          <NotificationCenter
-            isOpen={notificationModalOpen}
-            onClose={() => setNotificationModalOpen(false)}
-          />
-        </div>
+        />
       )}
 
+      {/* Mobile slide-in notification panel */}
+      {variant === 'mobile' && (
+        <div 
+          className="notification-panel"
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '300px',
+            height: '100vh',
+            backgroundColor: '#fff',
+            boxShadow: '-2px 0 10px rgba(0,0,0,0.1)',
+            zIndex: 1070,
+            transition: 'transform 0.3s ease',
+            transform: notificationModalOpen ? 'translateX(0)' : 'translateX(100%)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {/* Panel Header */}
+          <div className="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
+            <h6 className="m-0 fw-bold mb-0">Notifications</h6>
+            <div className="d-flex align-items-center gap-2">
+              {notifications.length > 0 && (
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={handleClearAll}
+                >
+                  Clear All
+                </button>
+              )}
+              <button 
+                className="btn btn-link text-dark p-0"
+                onClick={() => setNotificationModalOpen(false)}
+                aria-label="Close notifications"
+              >
+                <i className="fa fa-times fa-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          {/* Notification content */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {notifLoading && (
+              <div className="d-flex justify-content-center py-4">
+                <div className="spinner-border text-primary" role="status" />
+              </div>
+            )}
+            {notifError && (
+              <div className="text-center p-3 text-danger small">
+                <i className="fa fa-exclamation-circle me-2"></i>
+                {notifError}
+              </div>
+            )}
+            {!notifLoading && notifications.length === 0 && (
+              <div className="text-center text-muted p-4">
+                <i className="fa fa-bell-slash fa-2x mb-2" />
+                <p className="mb-0">No notifications yet</p>
+              </div>
+            )}
+            {notifications.map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+                onMarkRead={markAsRead}
+                onDelete={deleteNotification}
+                allowClick={false}
+                showActions={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
