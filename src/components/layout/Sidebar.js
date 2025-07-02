@@ -168,10 +168,12 @@ const Sidebar = ({
                   </small>
                 </div>
               </div>
-              {/* Notification bell */}
-              <div className="ms-2">
-                <NotificationBell />
-              </div>
+              {/* Notification bell (show only on non-mobile variants) */}
+              {variant !== 'mobile' && (
+                <div className="ms-2">
+                  <NotificationBell />
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -179,8 +181,27 @@ const Sidebar = ({
         {/* Navigation */}
         <nav className="sidebar-nav p-3 flex-grow-1">
           <ul className="nav flex-column">
+            {/* Mobile notifications entry */}
+            {variant === 'mobile' && isAuthenticated && (
+              <li className="nav-item mb-2">
+                <div
+                  className="nav-link d-flex align-items-center py-2 px-3 text-secondary bg-transparent w-100"
+                  style={{
+                    borderRadius: '8px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <NotificationBell />
+                  <span className="ms-3">Notifications</span>
+                </div>
+              </li>
+            )}
             {navigationItems.map((item, index) => (
-              <li key={index} className="nav-item mb-2">
+              <li
+                key={index}
+                className="nav-item mb-2 d-flex align-items-center justify-content-between"
+              >
                 {item.label === 'Direct Messages' ? (
                   <button
                     type="button"

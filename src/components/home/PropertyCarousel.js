@@ -24,7 +24,7 @@ const PropertyCarousel = () => {
   // Function to split title into words and wrap each in a span
   const formatTitle = (title) => {
     return title.split(' ').map((word, index) => (
-      <span key={index}>{word}</span>
+      <span key={index}>{word}{' '}</span>
     ));
   };
 

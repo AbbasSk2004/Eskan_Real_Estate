@@ -105,6 +105,7 @@ const Navbar = ({ onChatOpen }) => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         {/* Nav links visible only on lg and up */}
         <div className="collapse navbar-collapse d-none d-lg-flex">
           <div className="navbar-nav ms-auto">
