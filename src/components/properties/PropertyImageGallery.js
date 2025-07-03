@@ -41,6 +41,7 @@ const ImageModal = ({ images, currentIndex, title, onClose }) => {
                 alt={`${title} ${activeIndex + 1}`}
                 className="img-fluid"
                 style={{ maxHeight: '90vh', maxWidth: '90vw', objectFit: 'contain' }}
+                loading="eager"
               />
               <button
                 className="btn btn-light rounded-circle p-2 position-absolute start-0 top-50 translate-middle-y ms-3"
@@ -75,6 +76,7 @@ const ImageModal = ({ images, currentIndex, title, onClose }) => {
                     objectFit: 'cover',
                     cursor: 'pointer',
                   }}
+                  loading="eager"
                   onClick={() => goToImage(index)}
                 />
               ))}
@@ -109,6 +111,7 @@ const PropertyImageGallery = ({ mainImage, images = [] }) => {
             src={allImages[0]}
             alt="Main"
             className="img-fluid"
+            loading="eager"
           />
           <div className="position-absolute top-0 end-0 m-3">
             <span className="badge bg-dark bg-opacity-75 px-3 py-2">
@@ -130,6 +133,7 @@ const PropertyImageGallery = ({ mainImage, images = [] }) => {
                 src={img}
                 alt={`Thumb ${index + 1}`}
                 className="img-fluid"
+                loading="eager"
               />
             </div>
           ))}

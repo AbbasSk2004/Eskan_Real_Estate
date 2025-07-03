@@ -177,6 +177,7 @@ const PropertyCard = ({
               alt={title}
               className="w-100 h-100"
               style={{ objectFit: 'cover', minHeight: '300px' }}
+              loading="eager"
             />
           </Link>
           {/* Status Badge */}
@@ -257,6 +258,7 @@ const PropertyCard = ({
             alt={title}
             className="w-100"
             style={{ height: '250px', objectFit: 'cover' }}
+            loading="eager"
           />
         </Link>
 
