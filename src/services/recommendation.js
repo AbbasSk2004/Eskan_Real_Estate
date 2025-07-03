@@ -176,7 +176,7 @@ export const getRecommendedProperties = async (userId = null, limit = 5) => {
         // Attach source metadata to the array for backward compatibility
         const arr = mlRecommendations.data;
         arr.source = mlRecommendations.source || 'ml';
-        return arr;
+        return filterOwn(arr, userId);
       }
 
       // Fallback to local recommendations if ML fails
@@ -185,13 +185,13 @@ export const getRecommendedProperties = async (userId = null, limit = 5) => {
       if (Array.isArray(localRec)) {
         localRec.source = localRec.source || 'local';
       }
-      return localRec;
+      return filterOwn(localRec, userId);
     } else {
       const localRec2 = await getLocalRecommendations(limit);
       if (Array.isArray(localRec2)) {
         localRec2.source = localRec2.source || 'local';
       }
-      return localRec2;
+      return filterOwn(localRec2, userId);
     }
   } catch (error) {
     console.error('Error in getRecommendedProperties:', error);
@@ -201,4 +201,12 @@ export const getRecommendedProperties = async (userId = null, limit = 5) => {
     }
     return defRec;
   }
+};
+
+// Helper to remove properties that belong to the current user
+const filterOwn = (list, uid) => {
+  if (!Array.isArray(list) || !uid) return list;
+  const filtered = list.filter(p => p?.profiles_id !== uid);
+  if (list.source) filtered.source = list.source;
+  return filtered;
 };
