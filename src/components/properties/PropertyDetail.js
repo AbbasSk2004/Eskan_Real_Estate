@@ -714,14 +714,16 @@ const PropertyDetail = () => {
                 )}
 
                 {/* Location Map */}
-                <div className="property-location bg-white rounded-3 shadow-sm p-4 mb-4">
-                  <PropertyMap 
-                    locationUrl={property.location_url}
-                    address={property.address}
-                    city={property.city}
-                    governate={property.governate}
-                  />
-                </div>
+                {property.location_url && (
+                  <div className="property-location bg-white rounded-3 shadow-sm p-4 mb-4">
+                    <PropertyMap 
+                      locationUrl={property.location_url}
+                      address={property.address}
+                      city={property.city}
+                      governate={property.governate}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Sidebar */}

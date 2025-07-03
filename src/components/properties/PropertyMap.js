@@ -204,6 +204,9 @@ const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }
 });
 
 const PropertyMap = React.memo(({ locationUrl, village, city, governate }) => {
+  // If no location URL is available, render nothing
+  if (!locationUrl) return null;
+
   return (
     <GoogleMapsLoader>
       <PropertyMapContent 
