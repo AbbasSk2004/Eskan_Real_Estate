@@ -92,6 +92,7 @@ const Navbar = ({ onChatOpen }) => {
                 borderRadius: '50%', 
                 objectFit: 'cover'
               }} 
+              loading="eager"
             />
           </div>
           <h1 className="m-0 text-primary">ESKAN</h1>
