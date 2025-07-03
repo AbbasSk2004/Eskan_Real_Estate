@@ -205,8 +205,16 @@ export const getRecommendedProperties = async (userId = null, limit = 5) => {
 
 // Helper to remove properties that belong to the current user
 const filterOwn = (list, uid) => {
-  if (!Array.isArray(list) || !uid) return list;
-  const filtered = list.filter(p => p?.profiles_id !== uid);
-  if (list.source) filtered.source = list.source;
-  return filtered;
+  if (!Array.isArray(list)) return list;
+
+  // Remove properties that belong to the current user (when uid is available)
+  const filtered = uid ? list.filter(p => p?.profiles_id !== uid) : list;
+
+  // Deduplicate by property ID to avoid duplicate React keys
+  const deduped = [...new Map(filtered.map(prop => [prop.id, prop])).values()];
+
+  // Preserve the custom `source` metadata that may be attached to the array
+  if (list.source) deduped.source = list.source;
+
+  return deduped;
 };

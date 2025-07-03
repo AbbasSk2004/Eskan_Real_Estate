@@ -56,13 +56,21 @@ const PropertyCarousel = () => {
           property && property.id && (property.title || property.description)
         );
 
-        if (validProperties.length === 0) {
+        // Exclude properties that belong to the current user (extra safety)
+        const notOwn = user?.id 
+          ? validProperties.filter(p => p.profiles_id !== user.id) 
+          : validProperties;
+
+        // Remove duplicate property IDs to avoid duplicate React keys
+        const uniqueProps = [...new Map(notOwn.map(p => [p.id, p])).values()];
+
+        if (uniqueProps.length === 0) {
           setProperties([]);
           setError('No properties available at this time');
           return;
         }
 
-        setProperties(validProperties);
+        setProperties(uniqueProps);
         // Set recommendation source if available
         setRecommendationSource(response.source || null);
         setError(null);
