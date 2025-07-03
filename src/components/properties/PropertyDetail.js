@@ -727,74 +727,76 @@ const PropertyDetail = () => {
               </div>
 
               {/* Sidebar */}
-              <div className="col-lg-4">
-                {/* Contact Owner Card */}
-                <div className="contact-owner-card bg-white rounded-3 shadow-sm p-4 mb-4">
-                  <div className="agent-header text-center mb-4">
-                    <div className="agent-avatar mb-3">
-                      <img
-                        src={property.profiles.profile_photo || '/img/default-avatar.png'}
-                        alt={`${property.profiles.firstname} ${property.profiles.lastname}`}
-                        className="rounded-circle border border-3 border-primary"
-                        width="80"
-                        height="80"
-                        style={{ objectFit: 'cover' }}
-                      />
+              {(!user || (property.profiles?.profiles_id !== user.id && property.profiles_id !== user.id)) && (
+                <div className="col-lg-4">
+                  {/* Contact Owner Card */}
+                  <div className="contact-owner-card bg-white rounded-3 shadow-sm p-4 mb-4">
+                    <div className="agent-header text-center mb-4">
+                      <div className="agent-avatar mb-3">
+                        <img
+                          src={property.profiles.profile_photo || '/img/default-avatar.png'}
+                          alt={`${property.profiles.firstname} ${property.profiles.lastname}`}
+                          className="rounded-circle border border-3 border-primary"
+                          width="80"
+                          height="80"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                      <h4 className="h5 fw-bold mb-1">
+                        {property.profiles.firstname} {property.profiles.lastname}
+                      </h4>
+                      <p className="text-muted small mb-0">
+                        <i className="fas fa-user-tie me-1"></i>
+                        {property.profiles.role || 'Property Owner'}
+                      </p>
                     </div>
-                    <h4 className="h5 fw-bold mb-1">
-                      {property.profiles.firstname} {property.profiles.lastname}
-                    </h4>
-                    <p className="text-muted small mb-0">
-                      <i className="fas fa-user-tie me-1"></i>
-                      {property.profiles.role || 'Property Owner'}
-                    </p>
-                  </div>
 
-                  <div className="contact-actions d-grid gap-2">
-                    <a
-                      href={`https://wa.me/${property.profiles.phone}`}
-                      className="btn btn-success btn-lg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <i className="fab fa-whatsapp me-2"></i>
-                      WhatsApp
-                    </a>
-                    
-                    <button
-                      onClick={handleStartChat}
-                      className="btn btn-primary btn-lg"
-                    >
-                      <i className="fas fa-comments me-2"></i>
-                      Send Message
-                    </button>
-                    
-                    <a
-                      href={`tel:${property.profiles.phone}`}
-                      className="btn btn-outline-primary btn-lg"
-                    >
-                      <i className="fas fa-phone me-2"></i>
-                      Call Now
-                    </a>
-                    
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      data-bs-toggle={user ? "collapse" : ""}
-                      data-bs-target={user ? "#inquiryFormCollapse" : ""}
-                      aria-expanded="false"
-                      aria-controls="inquiryFormCollapse"
-                      onClick={!user ? handleInquiryClick : undefined}
-                    >
-                      <i className="fas fa-envelope me-2"></i>
-                      Inquiry
-                    </button>
-                  </div>
-                  <div className="collapse mt-3" id="inquiryFormCollapse">
-                    <PropertyInquiryForm propertyId={property.id} />
+                    <div className="contact-actions d-grid gap-2">
+                      <a
+                        href={`https://wa.me/${property.profiles.phone}`}
+                        className="btn btn-success btn-lg"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fab fa-whatsapp me-2"></i>
+                        WhatsApp
+                      </a>
+                      
+                      <button
+                        onClick={handleStartChat}
+                        className="btn btn-primary btn-lg"
+                      >
+                        <i className="fas fa-comments me-2"></i>
+                        Send Message
+                      </button>
+                      
+                      <a
+                        href={`tel:${property.profiles.phone}`}
+                        className="btn btn-outline-primary btn-lg"
+                      >
+                        <i className="fas fa-phone me-2"></i>
+                        Call Now
+                      </a>
+                      
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        data-bs-toggle={user ? "collapse" : ""}
+                        data-bs-target={user ? "#inquiryFormCollapse" : ""}
+                        aria-expanded="false"
+                        aria-controls="inquiryFormCollapse"
+                        onClick={!user ? handleInquiryClick : undefined}
+                      >
+                        <i className="fas fa-envelope me-2"></i>
+                        Inquiry
+                      </button>
+                    </div>
+                    <div className="collapse mt-3" id="inquiryFormCollapse">
+                      <PropertyInquiryForm propertyId={property.id} />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Similar Properties Section */}
               {memoizedPropertyData && (
