@@ -23,7 +23,7 @@ const QuickActions = ({ agentApplication }) => {
           </div>
           <div className="col-md-4 mb-3">
             {!agentApplication ? (
-              <Link to="/agent-application" className="btn btn-outline-success w-100">
+              <Link to="/property-agent" className="btn btn-outline-success w-100">
                 <i className="fa fa-user-tie me-2"></i>
                 Become an Agent
               </Link>
