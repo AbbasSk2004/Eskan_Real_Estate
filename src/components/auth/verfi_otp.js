@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import authService from '../../services/auth';
 import '../../assets/css/RegisterForm.css';
@@ -8,7 +7,6 @@ import '../../assets/css/RegisterForm.css';
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { updateUserState } = useAuth();
   const toast = useToast();
   
   const [email, setEmail] = useState('');
@@ -81,13 +79,8 @@ const VerifyOTP = () => {
       if (response.success) {
         toast.success('Email verified successfully!');
         
-        // Update user state with the verified user data
-        if (response.user) {
-          updateUserState(response.user);
-        }
-        
-        // Redirect to home page
-        navigate('/', { replace: true });
+        // Email verified successfully, redirect user to login page to sign in
+        navigate('/login', { replace: true });
       } else {
         setError(response.message || 'Verification failed');
       }
