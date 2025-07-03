@@ -1,20 +1,13 @@
-import ReactGA from 'react-ga4';
-
-let isInitialized = false;
+/**
+ * Analytics stubs — Google Analytics has been removed from the project.
+ * These no-op functions are kept so that existing imports continue to work
+ * without code changes elsewhere.
+ */
 
 export const initAnalytics = () => {
-  if (isInitialized) return;
-  const measurementId = process.env.REACT_APP_GA_ID || 'G-XXXXXXX';
-  if (!measurementId || measurementId === 'G-XXXXXXX') {
-    // eslint-disable-next-line no-console
-    console.warn('Google Analytics measurement ID is missing or default. Tracking is disabled.');
-    return;
-  }
-  ReactGA.initialize(measurementId);
-  isInitialized = true;
+  // No-op: analytics disabled
 };
 
-export const sendPageview = (path) => {
-  if (!isInitialized) return;
-  ReactGA.send({ hitType: 'pageview', page: path });
+export const sendPageview = () => {
+  // No-op: analytics disabled
 }; 

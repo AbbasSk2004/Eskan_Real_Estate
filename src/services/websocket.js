@@ -14,7 +14,9 @@ class WebSocketService {
 
   connect() {
     if (this.socket && (this.socket.readyState === WebSocket.CONNECTING || this.socket.readyState === WebSocket.OPEN)) {
-      console.log('WebSocket already connected or connecting');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('WebSocket already connected or connecting');
+      }
       return;
     }
 

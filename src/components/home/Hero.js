@@ -36,10 +36,10 @@ const Hero = () => {
         <div className="col-md-6 animated fadeIn">
           <Slider {...settings}>
             <div className="slider-item">
-              <img loading="lazy" className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-1.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
+              <img loading="eager" className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-1.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
             </div>
             <div className="slider-item">
-              <img loading="lazy" className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-2.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
+              <img loading="eager" className="img-fluid w-100" src={process.env.PUBLIC_URL + '/img/carousel-2.jpg'} alt="Property Carousel" style={{ objectFit: 'cover', maxHeight: '600px' }} />
             </div>
           </Slider>
         </div>

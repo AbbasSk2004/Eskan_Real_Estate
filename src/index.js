@@ -24,6 +24,19 @@ import 'slick-carousel/slick/slick-theme.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+// --- Force all <img> tags to default to eager loading ----------------------
+const originalCreateElement = React.createElement;
+// eslint-disable-next-line react/display-name
+React.createElement = (type, props, ...children) => {
+  if (type === 'img') {
+    props = props || {};
+    if (!('loading' in props)) {
+      props.loading = 'eager';
+    }
+  }
+  return originalCreateElement(type, props, ...children);
+};
+// ---------------------------------------------------------------------------
 
 // Enable React Router v7 features
 const router = {
