@@ -247,6 +247,35 @@ const PropertyTypePage = () => {
             font-size: 1.7rem;
           }
         }
+
+        /* Extra adjustments for small mobile screens */
+        @media (max-width: 576px) {
+          .hero-section {
+            padding: 60px 0 40px 0;
+          }
+
+          .hero-title-container {
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .hero-line {
+            max-width: 100px;
+          }
+
+          .hero-title {
+            font-size: 1.6rem;
+            white-space: normal;
+          }
+
+          .hero-subtitle {
+            font-size: 0.95rem;
+          }
+
+          .hero-icon {
+            font-size: 1.8rem;
+          }
+        }
       `}</style>
     </div>
   );

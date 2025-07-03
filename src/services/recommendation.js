@@ -5,6 +5,35 @@ const USER_PREFERENCES_KEY = 'user_property_preferences';
 const VIEWED_PROPERTIES_KEY = 'user_viewed_properties';
 const MAX_STORED_VIEWS = 20;
 
+// ------------------------------------------------------------
+// Simple in-memory cache to avoid hammering the API every time
+// ------------------------------------------------------------
+const REC_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const recCache = new Map();
+
+const getRecCacheKey = (userId, limit) => `${userId || 'guest'}_${limit}`;
+
+const getCachedRecs = (userId, limit) => {
+  const key = getRecCacheKey(userId, limit);
+  const entry = recCache.get(key);
+  if (entry && (Date.now() - entry.timestamp) < REC_CACHE_DURATION) {
+    return entry.data;
+  }
+  return null;
+};
+
+const setCachedRecs = (userId, limit, data) => {
+  recCache.set(getRecCacheKey(userId, limit), {
+    data,
+    timestamp: Date.now()
+  });
+};
+
+// ------------------------------------------------------------
+// Deduplicate concurrent requests for the same user/limit combo
+// ------------------------------------------------------------
+const pendingRecPromises = new Map();
+
 // Store user filter preferences in local storage
 export const storeUserPreferences = (filters) => {
   try {
@@ -169,29 +198,65 @@ const getLocalRecommendations = async (limit = 5) => {
 // Main recommendation function that handles both authenticated and non-authenticated users
 export const getRecommendedProperties = async (userId = null, limit = 5) => {
   try {
-    if (userId) {
-      // Try ML recommendations first
-      const mlRecommendations = await getMlRecommendations(userId, limit);
-      if (mlRecommendations.success && mlRecommendations.data.length > 0) {
-        // Attach source metadata to the array for backward compatibility
-        const arr = mlRecommendations.data;
-        arr.source = mlRecommendations.source || 'ml';
-        return filterOwn(arr, userId);
+    // 1. Return from cache if fresh
+    const cached = getCachedRecs(userId, limit);
+    if (cached) return cached;
+
+    // 2. Deduplicate concurrent fetches
+    const pendingKey = getRecCacheKey(userId, limit);
+    if (pendingRecPromises.has(pendingKey)) {
+      return pendingRecPromises.get(pendingKey);
+    }
+
+    const fetchPromise = (async () => {
+      let result;
+
+      if (userId) {
+        // Try ML first
+        const mlRecommendations = await getMlRecommendations(userId, limit);
+        if (mlRecommendations.success && mlRecommendations.data.length > 0) {
+          result = mlRecommendations.data;
+          result.source = mlRecommendations.source || 'ml';
+        } else {
+          // Fall back to JS/local algorithm
+          result = await getLocalRecommendations(limit);
+          if (Array.isArray(result)) {
+            result.source = result.source || 'js';
+          }
+        }
+      } else {
+        // Guest users → local algorithm
+        result = await getLocalRecommendations(limit);
+        if (Array.isArray(result)) {
+          result.source = result.source || 'js';
+        }
       }
 
-      // Fallback to local recommendations if ML fails
-      const localRec = await getLocalRecommendations(limit);
-      // Ensure we always return an array; attach source if missing
-      if (Array.isArray(localRec)) {
-        localRec.source = localRec.source || 'local';
+      // Always have a fallback to default recommendations
+      if (!Array.isArray(result) || result.length === 0) {
+        result = await getDefaultRecommendations(limit);
+        if (Array.isArray(result)) {
+          result.source = 'default';
+        }
       }
-      return filterOwn(localRec, userId);
-    } else {
-      const localRec2 = await getLocalRecommendations(limit);
-      if (Array.isArray(localRec2)) {
-        localRec2.source = localRec2.source || 'local';
+
+      // Remove own listings + deduplicate
+      const finalResult = filterOwn(result, userId);
+
+      // Cache for future calls
+      if (Array.isArray(finalResult)) {
+        setCachedRecs(userId, limit, finalResult);
       }
-      return filterOwn(localRec2, userId);
+
+      return finalResult;
+    })();
+
+    pendingRecPromises.set(pendingKey, fetchPromise);
+
+    try {
+      return await fetchPromise;
+    } finally {
+      pendingRecPromises.delete(pendingKey);
     }
   } catch (error) {
     console.error('Error in getRecommendedProperties:', error);

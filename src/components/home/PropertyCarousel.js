@@ -39,7 +39,7 @@ const PropertyCarousel = () => {
         // Get recommendations based on user authentication status
         const response = await getRecommendedProperties(
           user?.id || null,
-          5 // Limit to 5 properties
+          10 // Match mobile app limit
         );
         
         if (!mounted) return;
@@ -154,8 +154,12 @@ const PropertyCarousel = () => {
               ? formatTitle('Recommended For You')
               : formatTitle('Personalized Recommendations')
             }
-            {recommendationSource === 'ml' && (
-              <small className="ms-2 text-muted d-none d-md-inline">(AI-powered)</small>
+            {recommendationSource && (
+              <small className="ms-2 text-muted d-none d-md-inline">(
+                {recommendationSource === 'ml'
+                  ? 'AI-powered'
+                  : recommendationSource.toUpperCase()}
+              )</small>
             )}
           </h2>
           <div className="carousel-line" />
