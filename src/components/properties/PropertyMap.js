@@ -3,7 +3,11 @@ import GoogleMapsLoader, { useGoogleMaps, MapContainer, MapLoadingUI, MapErrorUI
 import { endpoints } from '../../services/api';
 import axios from 'axios';
 
+const isEmbedUrl = (url) => /google\.com\/maps\/embed\?pb=/.test(url);
+
 const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }) => {
+  // If not an embed URL, render nothing
+  if (!isEmbedUrl(locationUrl)) return null;
   const mapRef = useRef(null);
   const [mapError, setMapError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -176,15 +180,9 @@ const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }
     };
   }, [cleanup, mapError, isLoaded, initializeMap, maps]);
 
+  // On error, render nothing (requirement: hide map section and errors)
   if (mapsError || mapError) {
-    return (
-      <MapContainer>
-        <MapErrorUI 
-          error={mapsError || new Error(errorMessage)} 
-          debugInfo={debugCoords ? { coordinates: debugCoords } : null} 
-        />
-      </MapContainer>
-    );
+    return null;
   }
 
   return (
@@ -202,8 +200,6 @@ const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }
     </MapContainer>
   );
 });
-
-const isEmbedUrl = (url) => /google\.com\/maps\/embed\?pb=/.test(url);
 
 const PropertyMap = React.memo(({ locationUrl, village, city, governate }) => {
   // Only render the map when a valid Google Maps embed URL is provided
