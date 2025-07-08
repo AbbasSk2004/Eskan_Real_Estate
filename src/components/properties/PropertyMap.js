@@ -6,8 +6,6 @@ import axios from 'axios';
 const isEmbedUrl = (url) => /google\.com\/maps\/embed\?pb=/.test(url);
 
 const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }) => {
-  // If not an embed URL, render nothing
-  if (!isEmbedUrl(locationUrl)) return null;
   const mapRef = useRef(null);
   const [mapError, setMapError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
