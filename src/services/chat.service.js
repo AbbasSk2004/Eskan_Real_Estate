@@ -55,13 +55,24 @@ export const chatService = {
       const response = await api.get('/chat/conversations');
       const conversations = response.data?.data || [];
 
+      // Process conversations to ensure last_message is set correctly
+      const processedConversations = conversations.map(conv => {
+        if (Array.isArray(conv.messages) && conv.messages.length > 0) {
+          return {
+            ...conv,
+            last_message: conv.messages[conv.messages.length - 1]
+          };
+        }
+        return conv;
+      });
+
       // Cache the conversations
       conversationCache.set('conversations', {
-        conversations,
+        conversations: processedConversations,
         timestamp: Date.now()
       });
 
-      return conversations;
+      return processedConversations;
     } catch (error) {
       const { shouldRetry, retryCount: newRetryCount } = handleError(error, retryCount);
       if (shouldRetry && newRetryCount <= MAX_RETRIES) {
@@ -128,6 +139,7 @@ export const chatService = {
               return {
                 ...conv,
                 messages: [...(conv.messages || []), newMessage],
+                last_message: newMessage, // Set last_message to the new message
                 updated_at: new Date().toISOString()
               };
             }

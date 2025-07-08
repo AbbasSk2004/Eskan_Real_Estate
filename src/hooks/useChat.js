@@ -143,11 +143,23 @@ export const useChat = () => {
       chatService.clearConversationCache();
       const data = await chatService.fetchConversations();
       if (Array.isArray(data)) {
+        // Process each conversation to ensure last_message is set correctly
+        const processedData = data.map(conv => {
+          // If messages array exists, set last_message to the last message in the array
+          if (Array.isArray(conv.messages) && conv.messages.length > 0) {
+            return {
+              ...conv,
+              last_message: conv.messages[conv.messages.length - 1]
+            };
+          }
+          return conv;
+        });
+        
         // Keep list ordered by latest activity
-        setConversations(sortConversations(data));
+        setConversations(sortConversations(processedData));
         // Update active conversation if it is still the current view
         if (activeConversationRef.current) {
-          const updatedConv = data.find(conv => conv.id === activeConversationRef.current.id);
+          const updatedConv = processedData.find(conv => conv.id === activeConversationRef.current.id);
           if (updatedConv) {
             setActiveConversation(updatedConv);
           }
@@ -303,7 +315,7 @@ export const useChat = () => {
                 messages: Array.isArray(conv.messages)
                   ? [...conv.messages, optimisticMessage]
                   : [optimisticMessage],
-                last_message: optimisticMessage
+                last_message: optimisticMessage // Set last_message to the optimistic message
               }
             : conv
         );
@@ -319,8 +331,22 @@ export const useChat = () => {
             msg.id === optimisticMessage.id ? newMessage : msg
           )
         );
-        // Force an immediate fetch of conversations to update the last message
-        fetchConversations();
+        
+        // Update conversation with real message
+        setConversations(prev => {
+          const updated = prev.map(conv =>
+            conv.id === conversationId
+              ? {
+                  ...conv,
+                  messages: Array.isArray(conv.messages)
+                    ? conv.messages.map(msg => msg.id === optimisticMessage.id ? newMessage : msg)
+                    : [newMessage],
+                  last_message: newMessage // Update last_message with the real message
+                }
+              : conv
+          );
+          return sortConversations(updated);
+        });
       }
       return newMessage;
     } catch (err) {
@@ -370,11 +396,12 @@ export const useChat = () => {
         const updated = prev.map((conv) => {
           if (conv.id === msg.conversation_id) {
             found = true;
+            // Always make sure to set the last_message to the new message
             const newMsgs = Array.isArray(conv.messages) ? [...conv.messages, msg] : [msg];
             return {
               ...conv,
               messages: newMsgs,
-              last_message: msg,
+              last_message: msg, // Ensure this is set to the newest message
               // Increment unread count locally if not the active conversation and sender is not me
               unread_count:
                 activeConversationRef.current?.id === msg.conversation_id || msg.sender_id === user?.id

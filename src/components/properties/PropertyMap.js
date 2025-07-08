@@ -203,9 +203,11 @@ const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }
   );
 });
 
+const isEmbedUrl = (url) => /google\.com\/maps\/embed\?pb=/.test(url);
+
 const PropertyMap = React.memo(({ locationUrl, village, city, governate }) => {
-  // If no location URL is available, render nothing
-  if (!locationUrl) return null;
+  // Only render the map when a valid Google Maps embed URL is provided
+  if (!locationUrl || !isEmbedUrl(locationUrl)) return null;
 
   return (
     <GoogleMapsLoader>
