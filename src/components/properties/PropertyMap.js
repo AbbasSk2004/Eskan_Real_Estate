@@ -178,8 +178,8 @@ const PropertyMapContent = React.memo(({ locationUrl, village, city, governate }
     };
   }, [cleanup, mapError, isLoaded, initializeMap, maps]);
 
-  // On error, render nothing (requirement: hide map section and errors)
-  if (mapsError || mapError) {
+  // Hide component if URL not embed or on error
+  if (!isEmbedUrl(locationUrl) || mapsError || mapError) {
     return null;
   }
 
